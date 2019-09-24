@@ -3,9 +3,5 @@ import Button from "./Button";
 
 export default { title: "Button" };
 
-export const defaultButton = () => <Button />;
-
-// components/button
-// ㄴ button.js
-// ㄴ button.js
-// ㄴ button.stories.js
+export const defaultButton = () => <Button text="button" />;
+export const disabledButton = () => <Button text="button" isDisabled />;
