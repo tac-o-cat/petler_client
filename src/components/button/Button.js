@@ -5,10 +5,11 @@ import styled from "styled-components";
 const ButtonContainer = styled.button``;
 
 const Button = props => {
-  const { text, isDisabled, onClick } = props;
+  // eslint-disable-next-line react/prop-types
+  const { children, isDisabled, onClick } = props;
   return (
     <ButtonContainer disabled={isDisabled} onClick={onClick}>
-      {text}
+      {children}
     </ButtonContainer>
   );
 };
@@ -19,7 +20,6 @@ Button.defaultProps = {
 };
 
 Button.propTypes = {
-  text: PropTypes.string.isRequired,
   onClick: PropTypes.func,
   isDisabled: PropTypes.bool,
 };
