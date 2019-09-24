@@ -1,7 +1,7 @@
 import React from "react";
+import { storiesOf } from "@storybook/react";
 import Input from "./Input";
 
-export default { title: "Input" };
-
-export const emailInput = () => <Input placeholder="Email" />;
-export const passwordInput = () => <Input placeholder="Password" inputType="password" />;
+storiesOf("Input", module)
+  .add("default input", () => <Input placeholder="Default Input" />)
+  .add("password input", () => <Input placeholder="Password Input" type="password" />);
