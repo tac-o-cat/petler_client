@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Button from "../components/button/Button";
-import Input from "../components/input/Input";
+import Button from "components/Button/Button";
+import Input from "components/input/Input";
 
 const FindPassword = ({ history }) => {
   return (

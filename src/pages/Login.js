@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { GoogleLogin } from "react-google-login";
 import KakaoLogin from "react-kakao-login";
 import config from "config";
-import Input from "../components/input/Input";
-import Button from "../components/button/Button";
+import Input from "components/input/Input";
+import Button from "components/Button/Button";
 
 const Login = () => {
   const responseSuccess = response => {
