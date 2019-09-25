@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Input from "../components/input/Input";
 import Button from "../components/button/Button";
 
@@ -11,7 +12,12 @@ const Login = () => {
         <Input placeholder="Password" type="password" />
         <Button text="Login" />
       </form>
-      <span>회원가입/비밀번호 찾기</span>
+      <Link to="/signup">
+        <span>회원가입</span>
+      </Link>
+      <Link to="/findpassword">
+        <span>비밀번호 찾기</span>
+      </Link>
       <Button text="Login with Google" />
       <Button text="Login with Kakao" />
     </div>
