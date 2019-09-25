@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import { GoogleLogin } from "react-google-login";
 import KakaoLogin from "react-kakao-login";
 import config from "config";
-import Input from "components/input/Input";
-import Button from "components/Button/Button";
 
 const Login = () => {
   const responseSuccess = response => {
@@ -20,9 +18,9 @@ const Login = () => {
     <div>
       <h3>나는 집사다</h3>
       <form>
-        <Input placeholder="E-mail" />
-        <Input placeholder="Password" type="password" />
-        <Button text="Login" />
+        <input placeholder="E-mail" />
+        <input placeholder="Password" type="password" />
+        <button type="button">Login</button>
       </form>
       <Link to="/signup">
         <span>회원가입</span>

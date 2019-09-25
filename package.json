@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "@babel/core": "^7.6.2",
-    "@storybook/react": "^5.2.1",
     "babel-loader": "^8.0.6",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
@@ -47,12 +46,9 @@
     "react-grid-system": "^5.0.2",
     "react-kakao-login": "^1.1.1",
     "react-router-dom": "^5.0.1",
-    "react-scripts": "3.1.2",
-    "styled-components": "^4.4.0",
-    "styled-reset": "^4.0.1"
+    "react-scripts": "3.1.2"
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^5.2.1",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.4.0",
     "eslint-config-airbnb": "^18.0.1",

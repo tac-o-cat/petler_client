@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import Button from "components/Button/Button";
-import Input from "components/input/Input";
 
 class UserInfo extends Component {
   state = {
@@ -24,12 +22,16 @@ class UserInfo extends Component {
       <>
         <h3>유저 정보 수정</h3>
         <form>
-          <Input placeholder="Username" />
-          <Input placeholder="Password" type="password" />
-          <Input placeholder="Confirm Password" type="password" />
-          <Button onClick={this.handleEdit}>수정</Button>
+          <input placeholder="Username" />
+          <input placeholder="Password" type="password" />
+          <input placeholder="Confirm Password" type="password" />
+          <button type="button" onClick={this.handleEdit}>
+            수정
+          </button>
         </form>
-        <Button onClick={this.handleLogout}>로그아웃</Button>
+        <button type="button" onClick={this.handleLogout}>
+          로그아웃
+        </button>
       </>
     );
   }
