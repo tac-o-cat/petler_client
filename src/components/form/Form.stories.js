@@ -3,7 +3,7 @@ import { storiesOf } from "@storybook/react";
 import { Container, Row, Col } from "react-grid-system";
 import Form from "components/form/Form";
 import Input from "components/input/Input";
-import Button from "components/button/Button";
+import Button from "components/Button/Button";
 
 storiesOf("Form", module).add("Form example", () => (
   <Form>
