@@ -1,17 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Button from "components/Button/Button";
-import Input from "components/input/Input";
 
 const FindPassword = ({ history }) => {
   return (
     <div>
       <h3>비밀번호 찾기</h3>
       <form>
-        <Input placeholder="E-mail" />
-        <Button text="확인" />
+        <input placeholder="E-mail" />
+        <button type="button">확인</button>
       </form>
-      <Button text="뒤로 가기" onClick={history.goBack} />
+      <button type="button" onClick={history.goBack}>
+        뒤로 가기
+      </button>
     </div>
   );
 };

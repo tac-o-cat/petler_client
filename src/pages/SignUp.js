@@ -1,20 +1,20 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Input from "components/input/Input";
-import Button from "components/Button/Button";
 
 const SignUp = ({ history }) => {
   return (
     <div>
       <h3>회원가입</h3>
       <form>
-        <Input placeholder="E-mail" />
-        <Input placeholder="Username" />
-        <Input placeholder="Password" type="password" />
-        <Input placeholder="Confirm Password" type="password" />
-        <Button text="회원 가입" />
+        <input placeholder="E-mail" />
+        <input placeholder="Username" />
+        <input placeholder="Password" type="password" />
+        <input placeholder="Confirm Password" type="password" />
+        <button type="button">회원 가입</button>
       </form>
-      <Button text="뒤로 가기" onClick={history.goBack} />
+      <button type="button" onClick={history.goBack}>
+        뒤로 가기
+      </button>
     </div>
   );
 };
