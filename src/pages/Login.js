@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { GoogleLogin } from "react-google-login";
 import KakaoLogin from "react-kakao-login";
+import config from "config";
 import Input from "../components/input/Input";
 import Button from "../components/button/Button";
 
@@ -30,14 +31,14 @@ const Login = () => {
         <span>비밀번호 찾기</span>
       </Link>
       <GoogleLogin
-        clientId="811313573280-v4f4truqg5t9ne8i25mu1bn03jo70v20.apps.googleusercontent.com"
+        clientId={config.GOOGLE_LOGIN_CLIENT_ID}
         buttonText="Login With Google"
         onSuccess={responseSuccess}
         onFailure={responseFail}
         cookiePolicy="single_host_origin"
       />
       <KakaoLogin
-        jsKey="73a619ca346b6e162b1e25167a1dc05a"
+        jsKey={config.KAKAO_LOGIN_JS_KEY}
         onSuccess={responseSuccess}
         onFailure={responseFail}
         getProfile
