@@ -4,16 +4,24 @@ import styled from "styled-components";
 
 const ButtonContainer = styled.button``;
 
-export default function Button(props) {
-  const { text, isDisabled } = props;
-  return <ButtonContainer disabled={isDisabled}>{text}</ButtonContainer>;
-}
+const Button = props => {
+  // eslint-disable-next-line react/prop-types
+  const { children, isDisabled, onClick } = props;
+  return (
+    <ButtonContainer disabled={isDisabled} onClick={onClick}>
+      {children}
+    </ButtonContainer>
+  );
+};
 
 Button.defaultProps = {
   isDisabled: false,
+  onClick: () => {},
 };
 
 Button.propTypes = {
-  text: PropTypes.string.isRequired,
+  onClick: PropTypes.func,
   isDisabled: PropTypes.bool,
 };
+
+export default Button;
