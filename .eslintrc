@@ -29,7 +29,8 @@
         "controlComponents": ["Input"],
         "depth": 3
       }
-    ]
+    ],
+    "react/state-in-constructor": ["error", "never"]
   },
   "settings": {
     "import/resolver": {
