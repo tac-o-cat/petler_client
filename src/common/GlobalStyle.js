@@ -3,10 +3,9 @@ import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   ${reset}
-  
-  //label
-  button {
-    font-size: 2rem;
+  * { font-family: 'Spoqa Han Sans', 'Sans-serif'; }
+  html, body {
+    font-size: 16px;
   }
 `;
 
