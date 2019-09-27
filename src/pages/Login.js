@@ -23,123 +23,129 @@ const Login = () => {
     console.error(error);
   };
   const useStyles = makeStyles(theme => ({
-    paper: {
-      marginTop: theme.spacing(20),
+    logo: {
+      marginBottom: theme.spacing(4),
+      fontSize: "2.5rem",
+      textAlign: "center",
+    },
+    loginInput: {
+      margin: 0,
+    },
+    loginContainer: {
       display: "flex",
-      flexDirection: "column",
       alignItems: "center",
-    },
-    form: {
-      width: "100%",
-      marginTop: theme.spacing(10),
-    },
-    submit: {
-      margin: theme.spacing(1, 0, 0),
+      justifyContent: "center",
+      height: "100vh",
     },
   }));
   const classes = useStyles();
   return (
-    <Container maxWidth="xs">
-      <div className={classes.paper}>
-        <Typography component="h1" variant="h5">
+    <Container className={classes.loginContainer} maxWidth="xs">
+      <div>
+        <Typography className={classes.logo} component="h1" variant="h5">
           나는 집사다
         </Typography>
-        <ValidatorForm className={classes.form} ref={() => "form"}>
-          <TextValidator
-            label="이메일"
-            name="email"
-            validators={["required", "isEmail"]}
-            errorMessages={["이메일을 입력해 주세요", "올바른 이메일 주소를 입력해 주세요"]}
-            autoComplete="email"
-            autoFocus
-            fullWidth
-            type="email"
-            variant="outlined"
-            margin="dense"
-          />
-          <TextValidator
-            label="비밀번호"
-            name="password"
-            type="password"
-            validators={["required"]}
-            errorMessages={["비밀번호를 입력해 주세요"]}
-            autoComplete="current-password"
-            autoFocus
-            fullWidth
-            variant="outlined"
-            margin="dense"
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            로그인
-          </Button>
+        <ValidatorForm ref={() => "form"}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextValidator
+                label="이메일"
+                name="email"
+                validators={["required", "isEmail"]}
+                errorMessages={["이메일을 입력해 주세요", "올바른 이메일 주소를 입력해 주세요"]}
+                autoComplete="email"
+                autoFocus
+                fullWidth
+                type="email"
+                className={classes.loginInput}
+                variant="outlined"
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextValidator
+                label="비밀번호"
+                name="password"
+                type="password"
+                validators={["required"]}
+                errorMessages={["비밀번호를 입력해 주세요"]}
+                autoComplete="current-password"
+                autoFocus
+                fullWidth
+                className={classes.loginInput}
+                variant="outlined"
+                margin="dense"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Link
+                href="/"
+                component={React.forwardRef((props, ref) => (
+                  <RouterLink innerRef={ref} to="/findpassword" {...props} />
+                ))}
+                variant="body2"
+              >
+                비밀번호를 잊으셨나요?
+              </Link>
+            </Grid>
+            <Grid item xs={12}>
+              <Button type="submit" fullWidth variant="contained" color="primary">
+                로그인
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                component={RouterLink}
+                to="/signup"
+                linkButton
+                fullWidth
+                variant="contained"
+                color="primary"
+              >
+                회원가입
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <GoogleLogin
+                render={renderProps => (
+                  <Button
+                    fullWidth
+                    onClick={renderProps.onClick}
+                    variant="contained"
+                    color="inherit"
+                  >
+                    Login With Google
+                  </Button>
+                )}
+                clientId={config.GOOGLE_LOGIN_CLIENT_ID}
+                onSuccess={responseSuccess}
+                onFailure={responseFail}
+                cookiePolicy="single_host_origin"
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <KakaoLogin
+                render={props => (
+                  <Button
+                    fullWidth
+                    onClick={() => {
+                      // eslint-disable-next-line react/prop-types
+                      props.onClick();
+                    }}
+                    variant="contained"
+                    color="inherit"
+                  >
+                    Login With Kakao
+                  </Button>
+                )}
+                jsKey={config.KAKAO_LOGIN_JS_KEY}
+                onSuccess={responseSuccess}
+                onFailure={responseFail}
+                getProfile
+              />
+            </Grid>
+          </Grid>
         </ValidatorForm>
-        <GoogleLogin
-          render={renderProps => (
-            <Button
-              fullWidth
-              onClick={renderProps.onClick}
-              variant="contained"
-              color="inherit"
-              className={classes.submit}
-            >
-              Login With Google
-            </Button>
-          )}
-          clientId={config.GOOGLE_LOGIN_CLIENT_ID}
-          onSuccess={responseSuccess}
-          onFailure={responseFail}
-          cookiePolicy="single_host_origin"
-        />
-        <KakaoLogin
-          render={props => (
-            <Button
-              fullWidth
-              onClick={() => {
-                // eslint-disable-next-line react/prop-types
-                props.onClick();
-              }}
-              variant="contained"
-              color="inherit"
-              className={classes.submit}
-            >
-              Login With Kakao
-            </Button>
-          )}
-          jsKey={config.KAKAO_LOGIN_JS_KEY}
-          onSuccess={responseSuccess}
-          onFailure={responseFail}
-          getProfile
-        />
-        <Grid container>
-          <Grid item xs>
-            <Link
-              href="/"
-              component={React.forwardRef((props, ref) => (
-                <RouterLink innerRef={ref} to="/signup" {...props} />
-              ))}
-              variant="body2"
-            >
-              회원가입
-            </Link>
-          </Grid>
-          <Grid item>
-            <Link
-              href="/"
-              component={React.forwardRef((props, ref) => (
-                <RouterLink innerRef={ref} to="/findpassword" {...props} />
-              ))}
-              variant="body2"
-            >
-              비밀번호를 잊으셨나요?
-            </Link>
-          </Grid>
-        </Grid>
       </div>
     </Container>
   );
