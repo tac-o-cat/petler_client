@@ -9,6 +9,7 @@ const UploadProfilePic = () => {
     <ImagesUploader
       url="localhost:3000"
       optimisticPreviews
+      label="프로필 사진"
       multiple={false}
       onLoadEnd={err => {
         if (err) {
