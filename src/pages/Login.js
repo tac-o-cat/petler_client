@@ -41,11 +41,11 @@ const Login = () => {
   const classes = useStyles();
   return (
     <Container className={classes.loginContainer} maxWidth="xs">
-      <div className={classes.paper}>
+      <div>
         <Typography className={classes.logo} component="h1" variant="h5">
           나는 집사다
         </Typography>
-        <ValidatorForm className={classes.form} ref={() => "form"}>
+        <ValidatorForm ref={() => "form"}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextValidator
@@ -89,26 +89,21 @@ const Login = () => {
               </Link>
             </Grid>
             <Grid item xs={12}>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                className={classes.submit}
-              >
+              <Button type="submit" fullWidth variant="contained" color="primary">
                 로그인
               </Button>
             </Grid>
             <Grid item xs={12}>
-              <Link
-                href="/"
-                component={React.forwardRef((props, ref) => (
-                  <RouterLink innerRef={ref} to="/signup" {...props} />
-                ))}
-                variant="body2"
+              <Button
+                component={RouterLink}
+                to="/signup"
+                linkButton
+                fullWidth
+                variant="contained"
+                color="primary"
               >
                 회원가입
-              </Link>
+              </Button>
             </Grid>
             <Grid item xs={6}>
               <GoogleLogin
@@ -118,7 +113,6 @@ const Login = () => {
                     onClick={renderProps.onClick}
                     variant="contained"
                     color="inherit"
-                    className={classes.submit}
                   >
                     Login With Google
                   </Button>
@@ -140,7 +134,6 @@ const Login = () => {
                     }}
                     variant="contained"
                     color="inherit"
-                    className={classes.submit}
                   >
                     Login With Kakao
                   </Button>
