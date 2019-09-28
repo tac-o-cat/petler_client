@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from "react";
+import React, { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { GoogleLogin } from "react-google-login";
 import KakaoLogin from "react-kakao-login";
@@ -11,8 +11,20 @@ import Button from "@material-ui/core/Button";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
+import { LOGIN_QUERY } from "queries/queries";
+import { useApolloClient } from "@apollo/react-hooks";
 
-const Login = () => {
+const Login = props => {
+  const client = useApolloClient();
+
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
+
+  const { email, password } = user;
+
+  /* 소셜 로그인 */
   const responseSuccess = response => {
     // email, username, profilepic, id토큰을 서버로 전송.
     // eslint-disable-next-line no-console
@@ -22,6 +34,30 @@ const Login = () => {
     // eslint-disable-next-line no-console
     console.error(error);
   };
+
+  /* 일반 로그인 */
+  const handleChange = e => {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+  // submit 버튼에 대한 이벤트 핸들러
+  const handleSubmit = async e => {
+    e.preventDefault();
+    try {
+      const { data } = await client.query({
+        query: LOGIN_QUERY,
+        variables: { email, password },
+      });
+
+      if (data) {
+        localStorage.setItem("token", data.login.token);
+        props.setToken(localStorage.getItem("token"));
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-alert
+      alert(error.message);
+    }
+  };
+
   const useStyles = makeStyles(theme => ({
     logo: {
       marginBottom: theme.spacing(4),
@@ -38,14 +74,16 @@ const Login = () => {
       height: "100vh",
     },
   }));
+
   const classes = useStyles();
+
   return (
     <Container className={classes.loginContainer} maxWidth="xs">
       <div>
         <Typography className={classes.logo} component="h1" variant="h5">
           나는 집사다
         </Typography>
-        <ValidatorForm ref={() => "form"}>
+        <ValidatorForm ref={() => "form"} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextValidator
@@ -60,6 +98,8 @@ const Login = () => {
                 className={classes.loginInput}
                 variant="outlined"
                 margin="dense"
+                onChange={handleChange}
+                value={email}
               />
             </Grid>
             <Grid item xs={12}>
@@ -75,13 +115,15 @@ const Login = () => {
                 className={classes.loginInput}
                 variant="outlined"
                 margin="dense"
+                onChange={handleChange}
+                value={password}
               />
             </Grid>
             <Grid item xs={12}>
               <Link
                 href="/"
-                component={React.forwardRef((props, ref) => (
-                  <RouterLink innerRef={ref} to="/findpassword" {...props} />
+                component={React.forwardRef((prop, ref) => (
+                  <RouterLink innerRef={ref} to="/findpassword" {...prop} />
                 ))}
                 variant="body2"
               >
@@ -97,7 +139,6 @@ const Login = () => {
               <Button
                 component={RouterLink}
                 to="/signup"
-                linkButton
                 fullWidth
                 variant="contained"
                 color="primary"
@@ -125,12 +166,12 @@ const Login = () => {
             </Grid>
             <Grid item xs={6}>
               <KakaoLogin
-                render={props => (
+                render={prop => (
                   <Button
                     fullWidth
                     onClick={() => {
                       // eslint-disable-next-line react/prop-types
-                      props.onClick();
+                      prop.onClick();
                     }}
                     variant="contained"
                     color="inherit"
