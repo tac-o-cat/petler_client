@@ -4,17 +4,17 @@ import { Login, NotFound, SignUp, FindPassword, CreateChannel, Main } from "page
 import LayoutWrapper from "layout/LayoutWrapper";
 
 function App() {
-  const [isLogin] = useState(false);
+  const [token, setToken] = useState(localStorage.getItem("token"));
 
   return (
     <Switch>
-      {isLogin ? (
+      {token ? (
         <LayoutWrapper>
           <Route path="/main" component={Main} />
         </LayoutWrapper>
       ) : (
         <>
-          <Route path="/" exact component={Login} />
+          <Route path="/" exact component={() => <Login setToken={setToken} />} />
           <Route path="/signup" component={SignUp} />
           <Route path="/findpassword" component={FindPassword} />
           <Route path="/createChannel" component={CreateChannel} />
