@@ -29,4 +29,34 @@ const SIGN_UP_MUTATION = gql`
   }
 `;
 
-export { LOGIN_QUERY, CHECK_UNIQUE_EMAIL, SIGN_UP_MUTATION };
+const CREATE_PET_MUTATION = gql`
+  mutation(
+    $name: String!
+    $gender: String
+    $age: String
+    $type: String
+    $typeDetail: String
+    $intro: String
+    $img: String
+    $todoColor: String!
+    $cardCover: String
+  ) {
+    createPet(
+      petInfo: {
+        name: $name
+        gender: $gender
+        age: $age
+        type: $type
+        typeDetail: $typeDetail
+        intro: $intro
+        img: $img
+        todoColor: $todoColor
+        cardCover: $cardCover
+      }
+    ) {
+      name
+    }
+  }
+`;
+
+export { LOGIN_QUERY, CHECK_UNIQUE_EMAIL, SIGN_UP_MUTATION, CREATE_PET_MUTATION };
