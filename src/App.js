@@ -1,25 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import { Switch, Route } from "react-router-dom";
-import { Login, NotFound, SignUp, FindPassword, CreateChannel, Main } from "pages";
+import { Login, NotFound, SignUp, FindPassword, CreateChannel, Main, MyPage } from "pages";
 import LayoutWrapper from "layout/LayoutWrapper";
+import AuthenticatedComponent from "components/AuthenticatedComponent";
 
 function App() {
-  const [token, setToken] = useState(localStorage.getItem("token"));
-
+  // 문제: notFound로 접근이 안 되고 있음.
   return (
     <Switch>
-      {token ? (
-        <LayoutWrapper>
+      <Route path="/" exact component={Login} />
+      <Route path="/signup" component={SignUp} />
+      <Route path="/findpassword" component={FindPassword} />
+      <Route path="/createChannel" component={CreateChannel} />
+      <LayoutWrapper>
+        <AuthenticatedComponent>
+          <Route path="/mypage" component={MyPage} />
           <Route path="/main" component={Main} />
-        </LayoutWrapper>
-      ) : (
-        <>
-          <Route path="/" exact component={() => <Login setToken={setToken} />} />
-          <Route path="/signup" component={SignUp} />
-          <Route path="/findpassword" component={FindPassword} />
-          <Route path="/createChannel" component={CreateChannel} />
-        </>
-      )}
+        </AuthenticatedComponent>
+      </LayoutWrapper>
       <Route component={NotFound} />
     </Switch>
   );
