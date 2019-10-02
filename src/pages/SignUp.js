@@ -7,6 +7,7 @@ import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
+import ImageSelector from "components/ImageSelector";
 import UploadProfilePic from "components/UploadProfilePic";
 import { SIGN_UP_MUTATION, CHECK_UNIQUE_EMAIL } from "queries/queries";
 import { useApolloClient } from "@apollo/react-hooks";
@@ -14,13 +15,15 @@ import { useApolloClient } from "@apollo/react-hooks";
 const SignUp = ({ history }) => {
   const client = useApolloClient();
 
+  const [file, setFile] = useState("");
+
   /* 유저 정보가 담긴 state 설정 */
   const [user, setUser] = useState({
     email: "",
     name: "",
     password: "",
     repeatPassword: "",
-    img: "https://codestates.com/images/logo_sub_b_simple.png",
+    img: "",
   });
   const { email, name, password, repeatPassword, img } = user;
 
@@ -54,6 +57,11 @@ const SignUp = ({ history }) => {
   /* submit 버튼 이벤트 핸들러 - 클릭 시 mutation 보냄 */
   const handleSubmit = async e => {
     e.preventDefault();
+
+    if (file) {
+      setUser({ ...user, img: await UploadProfilePic(file) });
+    }
+
     try {
       const { data } = await client.mutate({
         mutation: SIGN_UP_MUTATION,
@@ -100,7 +108,7 @@ const SignUp = ({ history }) => {
         <ValidatorForm ref={() => "form"} onSubmit={handleSubmit} debounceTime={1000}>
           <Grid container spacing={2}>
             <Grid item className={classes.profilePicGrid} xs={12}>
-              <UploadProfilePic />
+              <ImageSelector onImageReady={setFile} />
             </Grid>
             <Grid item xs={12}>
               <TextValidator
