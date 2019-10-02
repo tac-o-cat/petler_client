@@ -1,20 +1,21 @@
+/* eslint-disable no-alert */
 import React, { useState, useEffect } from "react";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
-import { GET_USER_BY_TOKEN } from "queries/queries";
+import { CHECK_CURRENT_PASSWORD, UPDATE_PASSWORD } from "queries/queries";
 import { useApolloClient } from "@apollo/react-hooks";
 
 const ChangePassword = ({ history }) => {
   const client = useApolloClient();
   const [changePassword, setChangedPassword] = useState({
-    email: "",
+    prevPassword: "",
     isValidate: false,
     password: "",
     repeatPassword: "",
   });
-  const { isValidate, password, repeatPassword } = changePassword;
+  const { prevPassword, isValidate, password, repeatPassword } = changePassword;
 
   const useStyles = makeStyles(() => ({
     changePasswordInput: {
@@ -23,17 +24,6 @@ const ChangePassword = ({ history }) => {
   }));
 
   const classes = useStyles();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await client.query({
-        query: GET_USER_BY_TOKEN,
-        variables: { token: localStorage.getItem("token") },
-      });
-      setChangedPassword({ ...changePassword, email: data.getUserByToken.email });
-    };
-    fetchData();
-  }, []);
 
   useEffect(() => {
     ValidatorForm.addValidationRule("isPasswordMatch", value => {
@@ -47,12 +37,37 @@ const ChangePassword = ({ history }) => {
   const handleChange = e => {
     setChangedPassword({ ...changePassword, [e.target.name]: e.target.value });
   };
-  const handleClick = () => {
-    // 비밀번호 체크하는 쿼리
+
+  const handleClick = async () => {
+    // 현재 비밀번호 체크하는 쿼리
+    try {
+      const { data } = await client.query({
+        query: CHECK_CURRENT_PASSWORD,
+        variables: { token: localStorage.getItem("token"), password: prevPassword },
+      });
+      if (data.confirmPW) {
+        setChangedPassword({ ...changePassword, isValidate: data.confirmPW });
+      } else {
+        alert("비밀번호를 확인하세요");
+      }
+    } catch (error) {
+      alert(error.message);
+    }
   };
-  const handleEdit = e => {
+  const handleEdit = async e => {
     e.preventDefault();
-    // input value를 받아 서버에 보내주는 로직 추가 필요.
+    try {
+      const { data } = await client.mutate({
+        mutation: UPDATE_PASSWORD,
+        variables: { token: localStorage.getItem("token"), password },
+      });
+      if (data.updatePassword) {
+        alert("비밀번호가 변경되었습니다");
+        history.push("/mypage");
+      }
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
@@ -63,7 +78,7 @@ const ChangePassword = ({ history }) => {
             <Grid item xs={12}>
               <TextValidator
                 label="현재 비밀번호"
-                name="password"
+                name="prevPassword"
                 validators={["required"]}
                 errorMessages={["비밀번호를 입력해 주세요"]}
                 autoFocus
@@ -73,7 +88,7 @@ const ChangePassword = ({ history }) => {
                 variant="outlined"
                 margin="dense"
                 onChange={handleChange}
-                value={password}
+                value={prevPassword}
               />
             </Grid>
             <Grid item xs={6}>

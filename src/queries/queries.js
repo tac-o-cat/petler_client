@@ -85,6 +85,17 @@ const UPDATE_USER_INFO = gql`
   }
 `;
 
+const CHECK_CURRENT_PASSWORD = gql`
+  query($token: String!, $password: String!) {
+    confirmPW(token: $token, password: $password)
+  }
+`;
+const UPDATE_PASSWORD = gql`
+  mutation($token: String!, $password: String!) {
+    updatePassword(token: $token, password: $password)
+  }
+`;
+
 export {
   LOGIN_QUERY,
   CHECK_UNIQUE_EMAIL,
@@ -93,4 +104,6 @@ export {
   GET_USER_INFO,
   GET_USER_BY_TOKEN,
   UPDATE_USER_INFO,
+  CHECK_CURRENT_PASSWORD,
+  UPDATE_PASSWORD,
 };
