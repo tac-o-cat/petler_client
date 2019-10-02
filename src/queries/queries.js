@@ -5,6 +5,7 @@ const LOGIN_QUERY = gql`
     login(email: $email, password: $password) {
       token
       user {
+        email
         name
         id
       }
@@ -22,11 +23,43 @@ const CHECK_UNIQUE_EMAIL = gql`
 
 const SIGN_UP_MUTATION = gql`
   mutation($email: String!, $name: String!, $password: String!, $img: String!) {
-    signUp(signupInput: { email: $email, name: $name, password: $password, img: $img }) {
+    signUp(userInfo: { email: $email, name: $name, password: $password, img: $img }) {
       name
       id
     }
   }
 `;
 
-export { LOGIN_QUERY, CHECK_UNIQUE_EMAIL, SIGN_UP_MUTATION };
+const GET_USER_BY_TOKEN = gql`
+  query($token: String!) {
+    getUserByToken(token: $token) {
+      email
+      name
+      img
+    }
+  }
+`;
+
+const GET_USER_INFO = gql`
+  query($email: String!) {
+    user(email: $email) {
+      name
+      img
+    }
+  }
+`;
+
+const UPDATE_USER_INFO = gql`
+  mutation($token: String!, $name: String!, $img: String!) {
+    updateUserInfo(token: $token, name: $name, img: $img)
+  }
+`;
+
+export {
+  LOGIN_QUERY,
+  CHECK_UNIQUE_EMAIL,
+  SIGN_UP_MUTATION,
+  GET_USER_INFO,
+  GET_USER_BY_TOKEN,
+  UPDATE_USER_INFO,
+};
