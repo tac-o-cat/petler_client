@@ -14,7 +14,7 @@ import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { LOGIN_QUERY } from "queries/queries";
 import { useApolloClient } from "@apollo/react-hooks";
 
-const Login = props => {
+const Login = ({ history }) => {
   const client = useApolloClient();
 
   const [user, setUser] = useState({
@@ -50,7 +50,7 @@ const Login = props => {
 
       if (data) {
         localStorage.setItem("token", data.login.token);
-        props.setToken(localStorage.getItem("token"));
+        history.push("/main");
       }
     } catch (error) {
       // eslint-disable-next-line no-alert
