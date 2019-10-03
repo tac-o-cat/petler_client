@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
+import ImageSelector from "components/ImageSelector";
 import UploadProfilePic from "components/UploadProfilePic";
 import { makeStyles } from "@material-ui/core/styles";
 import { GET_USER_BY_TOKEN, UPDATE_USER_INFO } from "queries/queries";
@@ -10,6 +11,7 @@ import { useApolloClient } from "@apollo/react-hooks";
 
 const ChangeUserInfo = ({ history }) => {
   const client = useApolloClient();
+  const [file, setFile] = useState("");
   const [user, setUser] = useState({
     name: "",
     img: "",
@@ -40,15 +42,25 @@ const ChangeUserInfo = ({ history }) => {
 
   const handleEdit = async e => {
     e.preventDefault();
+
+    const copiedUser = { ...user };
+    if (file) {
+      copiedUser.img = await UploadProfilePic(file);
+    }
+
+    console.log(copiedUser);
+
     try {
-      await client.mutate({
+      const { data } = await client.mutate({
         mutation: UPDATE_USER_INFO,
-        variables: { token: localStorage.getItem("token"), name, img },
+        variables: { token: localStorage.getItem("token"), ...copiedUser },
         refetchQueries: [
           { query: GET_USER_BY_TOKEN, variables: { token: localStorage.getItem("token") } },
         ],
       });
-      alert("회원정보 수정이 완료되었습니다.");
+      if (data.updateUserInfo) {
+        alert("회원정보 수정이 완료되었습니다.");
+      }
     } catch (error) {
       alert(error.message);
     }
@@ -62,7 +74,7 @@ const ChangeUserInfo = ({ history }) => {
     <ValidatorForm ref={() => "form"} onSubmit={handleEdit} debounceTime={1000}>
       <Grid container spacing={2}>
         <Grid item className={classes.profilePicGrid} xs={12}>
-          <UploadProfilePic />
+          <ImageSelector onImageReady={setFile} prevImg={img} />
         </Grid>
         <Grid item xs={12}>
           <TextValidator

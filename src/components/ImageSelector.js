@@ -56,9 +56,17 @@ const ImageSelector = props => {
     }
   };
 
+  const { prevImg } = props;
+
   return (
     <Box>
-      <div className="imgPreview">{imagePreviewUrl && <img src={imagePreviewUrl} alt="" />}</div>
+      <div className="imgPreview">
+        {imagePreviewUrl ? (
+          <img src={imagePreviewUrl} alt="" />
+        ) : (
+          <img src={prevImg} alt="prevImage" />
+        )}
+      </div>
       <Button variant="contained" size="small">
         <label>
           프로필 편집

@@ -7,6 +7,7 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import UploadProfilePic from "components/UploadProfilePic";
+import ImageSelector from "components/ImageSelector";
 import { CirclePicker } from "react-color";
 import { useApolloClient } from "@apollo/react-hooks";
 import { CREATE_PET_MUTATION } from "queries/queries";
@@ -15,6 +16,7 @@ import { CREATE_PET_MUTATION } from "queries/queries";
 const CreatePetProfile = () => {
   const client = useApolloClient();
 
+  const [file, setFile] = useState("");
   /* 펫 정보가 담긴 state 설정 */
   const [pet, setPet] = useState({
     name: "",
@@ -26,9 +28,9 @@ const CreatePetProfile = () => {
     intro: "",
     todoColor: "#2196f3",
     img: "https://codestates.com/images/logo_sub_b_simple.png",
-    cardCover: null,
+    cardCover: "",
   });
-  const { name, gender, age, type, typeEtc, typeDetail, intro, todoColor, img, cardCover } = pet;
+  const { name, gender, age, type, typeEtc, typeDetail, intro, todoColor, img } = pet;
 
   const petGender = [
     { value: "", label: "" },
@@ -67,19 +69,17 @@ const CreatePetProfile = () => {
   /* submit 버튼 이벤트 핸들러 - 클릭 시 mutation 보냄 */
   const handleSubmit = async e => {
     e.preventDefault();
+
+    const copiedPet = { ...pet };
+    if (file) {
+      copiedPet.img = await UploadProfilePic(file);
+    }
+
     try {
       const { data } = await client.mutate({
         mutation: CREATE_PET_MUTATION,
         variables: {
-          name,
-          gender,
-          age,
-          type: type === "그 외" ? typeEtc : type,
-          typeDetail,
-          intro,
-          todoColor,
-          img,
-          cardCover,
+          ...copiedPet,
         },
       });
       // 펫 프로필 생성 후 리다이렉트 할 페이지가 어디인지?
@@ -128,7 +128,7 @@ const CreatePetProfile = () => {
         <ValidatorForm ref={() => "form"} onSubmit={handleSubmit} debounceTime={1000}>
           <Grid container spacing={2}>
             <Grid item className={classes.profilePicGrid} xs={12}>
-              <UploadProfilePic />
+              <ImageSelector onImageReady={setFile} prevImg={img} />
             </Grid>
             <Grid item xs={8}>
               <TextValidator

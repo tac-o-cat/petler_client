@@ -25,7 +25,7 @@ const SignUp = ({ history }) => {
     repeatPassword: "",
     img: "",
   });
-  const { email, name, password, repeatPassword, img } = user;
+  const { email, name, password, repeatPassword } = user;
 
   useEffect(() => {
     /* password가 일치하는지 체크하는 custom validator 만듦. */
@@ -58,14 +58,15 @@ const SignUp = ({ history }) => {
   const handleSubmit = async e => {
     e.preventDefault();
 
+    const copiedUser = { ...user };
     if (file) {
-      setUser({ ...user, img: await UploadProfilePic(file) });
+      copiedUser.img = await UploadProfilePic(file);
     }
 
     try {
       const { data } = await client.mutate({
         mutation: SIGN_UP_MUTATION,
-        variables: { email, name, password, img },
+        variables: { ...copiedUser },
       });
       if (data.signUp.name) {
         alert("회원가입이 완료되었습니다.");
