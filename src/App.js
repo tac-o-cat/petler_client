@@ -11,13 +11,13 @@ function App() {
       <Route path="/" exact component={Login} />
       <Route path="/signup" component={SignUp} />
       <Route path="/findpassword" component={FindPassword} />
-      <Route path="/createChannel" component={CreateChannel} />
-      <LayoutWrapper>
-        <AuthenticatedComponent>
+      <AuthenticatedComponent>
+        <Route path="/createChannel" component={CreateChannel} />
+        <LayoutWrapper>
           <Route path="/mypage" component={MyPage} />
           <Route path="/main" component={Main} />
-        </AuthenticatedComponent>
-      </LayoutWrapper>
+        </LayoutWrapper>
+      </AuthenticatedComponent>
       <Route component={NotFound} />
     </Switch>
   );

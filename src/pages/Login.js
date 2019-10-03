@@ -47,10 +47,13 @@ const Login = ({ history }) => {
         query: LOGIN_QUERY,
         variables: { email, password },
       });
-
       if (data) {
         localStorage.setItem("token", data.login.token);
-        history.push("/main");
+        if (data.login.channel.length) {
+          history.push("/main");
+        } else {
+          history.push("/createChannel");
+        }
       }
     } catch (error) {
       // eslint-disable-next-line no-alert
