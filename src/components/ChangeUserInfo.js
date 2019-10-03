@@ -40,22 +40,20 @@ const ChangeUserInfo = ({ history }) => {
     fetchData();
   }, []);
 
-  const test = () => {
-    if (file) {
-      UploadProfilePic(file).then(imgUrl => {
-        setUser({ ...user, img: imgUrl });
-      });
-    }
-  };
-
   const handleEdit = async e => {
     e.preventDefault();
 
+    const copiedUser = { ...user };
+    if (file) {
+      copiedUser.img = await UploadProfilePic(file);
+    }
+
+    console.log(copiedUser);
+
     try {
-      await test();
       const { data } = await client.mutate({
         mutation: UPDATE_USER_INFO,
-        variables: { token: localStorage.getItem("token"), name, img },
+        variables: { token: localStorage.getItem("token"), ...copiedUser },
         refetchQueries: [
           { query: GET_USER_BY_TOKEN, variables: { token: localStorage.getItem("token") } },
         ],
