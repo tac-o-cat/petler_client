@@ -9,6 +9,9 @@ const LOGIN_QUERY = gql`
         name
         id
       }
+      channel {
+        id
+      }
     }
   }
 `;
@@ -85,6 +88,26 @@ const UPDATE_USER_INFO = gql`
   }
 `;
 
+const CHECK_CURRENT_PASSWORD = gql`
+  query($token: String!, $password: String!) {
+    confirmPW(token: $token, password: $password)
+  }
+`;
+const UPDATE_PASSWORD = gql`
+  mutation($token: String!, $password: String!) {
+    updatePassword(token: $token, password: $password)
+  }
+`;
+
+const CREATE_CHANNEL = gql`
+  mutation($token: String!, $name: String!, $channelId: ID) {
+    createChannel(channelInfo: { token: $token, name: $name, channelId: $channelId }) {
+      name
+      id
+    }
+  }
+`;
+
 export {
   LOGIN_QUERY,
   CHECK_UNIQUE_EMAIL,
@@ -93,4 +116,7 @@ export {
   GET_USER_INFO,
   GET_USER_BY_TOKEN,
   UPDATE_USER_INFO,
+  CHECK_CURRENT_PASSWORD,
+  UPDATE_PASSWORD,
+  CREATE_CHANNEL,
 };
