@@ -38,7 +38,7 @@ const ImageSelector = props => {
     if (file) {
       props.onImageReady(file);
     }
-  }, [file]);
+  }, [file, props]);
 
   const handleImageChange = e => {
     e.preventDefault();

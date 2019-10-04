@@ -36,7 +36,7 @@ const ChangeUserInfo = ({ history }) => {
       setUser({ name: data.getUserByToken.name, img: data.getUserByToken.img });
     };
     fetchData();
-  }, []);
+  }, [client]);
 
   const handleEdit = async e => {
     e.preventDefault();
