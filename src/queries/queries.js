@@ -108,6 +108,17 @@ const CREATE_CHANNEL = gql`
   }
 `;
 
+const GET_CHANNEL = gql`
+  query($email: String!) {
+    user(email: $email) {
+      channel {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export {
   LOGIN_QUERY,
   CHECK_UNIQUE_EMAIL,
@@ -119,4 +130,5 @@ export {
   CHECK_CURRENT_PASSWORD,
   UPDATE_PASSWORD,
   CREATE_CHANNEL,
+  GET_CHANNEL,
 };

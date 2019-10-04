@@ -4,6 +4,8 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import { Root, Header, Nav, Content, Footer } from "layout";
+import SelectChannel from "components/SelectChannel";
+import SettingChannel from "components/SettingChannel";
 
 const config = {
   navAnchor: "left",
@@ -60,7 +62,8 @@ const LayoutWrapper = props => {
           active: <ChevronLeftIcon />,
         }}
       >
-        이곳은 헤더입니다
+        <SelectChannel />
+        <SettingChannel />
       </Header>
       <Nav
         collapsedIcon={{
