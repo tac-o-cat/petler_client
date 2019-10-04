@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
@@ -7,9 +7,11 @@ import Button from "@material-ui/core/Button";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { CREATE_CHANNEL } from "queries/queries";
 import { useApolloClient } from "@apollo/react-hooks";
+import { CurrentUserContext } from "components/Authentication";
 
-const CreateChannel = ({ history }) => {
+const CreateChannel = props => {
   const client = useApolloClient();
+  const { setCurrentChannel } = useContext(CurrentUserContext);
 
   const [channel, setChannel] = useState({ channelName: "" });
   const { channelName } = channel;
@@ -41,8 +43,10 @@ const CreateChannel = ({ history }) => {
         variables: { token: localStorage.getItem("token"), name: channelName },
       });
       if (data.createChannel.id) {
+        console.log("채널생성", data.createChannel.id);
+        setCurrentChannel({ channelId: data.createChannel.id });
         alert("채널이 생성되었습니다!");
-        history.push("/main");
+        props.history.push("/main");
       }
     } catch (error) {
       alert(error.message);

@@ -34,22 +34,23 @@ const styles = () => ({
 class Root extends React.Component {
   constructor(props) {
     super(props);
-    this.setCollapse = val =>
-      this.setState(({ collapsed }) => ({
-        collapsed: typeof val === "object" ? !collapsed : val,
-      }));
-    this.setOpen = val =>
-      this.setState(({ open }) => ({
-        open: typeof val === "object" ? !open : val,
-      }));
+    this.state = {
+      open: false,
+      collapsed: false,
+      setCollapse: this.setCollapse,
+      setOpen: this.setOpen,
+    };
   }
 
-  state = {
-    open: false,
-    collapsed: false,
-    setCollapse: this.setCollapse,
-    setOpen: this.setOpen,
-  };
+  setCollapse = val =>
+    this.setState(({ collapsed }) => ({
+      collapsed: typeof val === "object" ? !collapsed : val,
+    }));
+
+  setOpen = val =>
+    this.setState(({ open }) => ({
+      open: typeof val === "object" ? !open : val,
+    }));
 
   render() {
     const {
