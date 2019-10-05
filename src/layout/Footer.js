@@ -8,9 +8,9 @@ const styles = ({ breakpoints, palette, spacing, transitions }) => ({
   root: {
     borderTop: "1px solid",
     borderColor: palette.grey[200],
-    padding: spacing(2),
+    padding: spacing(0),
     [breakpoints.up("sm")]: {
-      padding: spacing(3),
+      padding: spacing(0),
     },
     transition: transitions.create(["margin"], {
       easing: transitions.easing.sharp,
