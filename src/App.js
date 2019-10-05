@@ -1,6 +1,16 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
-import { Login, NotFound, SignUp, FindPassword, CreateChannel, Main, MyPage } from "pages";
+import {
+  Login,
+  NotFound,
+  SignUp,
+  FindPassword,
+  CreateChannel,
+  Main,
+  MyPage,
+  ChannelSettings,
+  MemberSettings,
+} from "pages";
 import LayoutWrapper from "layout/LayoutWrapper";
 import { Authentication } from "components/Authentication";
 
@@ -16,6 +26,8 @@ function App() {
         <LayoutWrapper>
           <Route path="/main" component={Main} />
           <Route path="/mypage" component={MyPage} />
+          <Route path="/channelsettings" component={ChannelSettings} />
+          <Route path="/membersettings" component={MemberSettings} />
         </LayoutWrapper>
       </Authentication>
       <Route component={NotFound} />
