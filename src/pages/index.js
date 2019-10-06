@@ -5,3 +5,5 @@ export { default as FindPassword } from "pages/FindPassword";
 export { default as MyPage } from "pages/MyPage";
 export { default as CreateChannel } from "pages/CreateChannel";
 export { default as Main } from "pages/Main";
+export { default as ChannelSettings } from "pages/ChannelSettings";
+export { default as MemberSettings } from "pages/MemberSettings";

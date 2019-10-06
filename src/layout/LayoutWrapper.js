@@ -5,7 +5,7 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import { Root, Header, Nav, Content, Footer } from "layout";
 import SelectChannel from "components/SelectChannel";
-import SettingChannel from "components/SettingChannel";
+import ChannelSettingsBtn from "components/ChannelSettingsBtn";
 import NavBar from "components/NavBar";
 
 const config = {
@@ -64,7 +64,7 @@ const LayoutWrapper = props => {
         }}
       >
         <SelectChannel />
-        <SettingChannel />
+        <ChannelSettingsBtn />
       </Header>
       <Nav
         collapsedIcon={{

@@ -1,46 +1,72 @@
-import React, { useState, useContext } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+/* eslint-disable no-alert */
+import React, { useState, useEffect, useContext } from "react";
+import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
+import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
-import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
-import { CREATE_CHANNEL, GET_USER_BY_TOKEN } from "queries/queries";
-import { useApolloClient } from "@apollo/react-hooks";
+import { makeStyles } from "@material-ui/core/styles";
 import { CurrentUserContext } from "components/Authentication";
+import { UPDATE_CHANNEL, GET_USER_BY_TOKEN } from "queries/queries";
+import { useApolloClient } from "@apollo/react-hooks";
 
-const CreateChannel = props => {
+const ChannelSettings = () => {
   const client = useApolloClient();
-  const { setCurrentChannel } = useContext(CurrentUserContext);
+  const { currentChannel, setCurrentChannel, currentUser, setCurrentUser } = useContext(
+    CurrentUserContext,
+  );
+  const { id, name } = currentChannel;
 
   const [channel, setChannel] = useState({ channelName: "" });
   const { channelName } = channel;
+
+  useEffect(() => {
+    setChannel({ channelName: name });
+  }, [name]);
+
+  const fetchData = async () => {
+    try {
+      const { data } = await client.query({
+        query: GET_USER_BY_TOKEN,
+        variables: { token: localStorage.getItem("token") },
+      });
+      setCurrentUser({ ...currentUser, channels: data.getUserByToken.channels });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
+    }
+  };
+
   const useStyles = makeStyles(theme => ({
-    createChannelContainer: {
+    channelSettingsContainer: {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      height: "100vh",
+      height: "75vh",
     },
     title: {
       marginBottom: theme.spacing(2),
-      fontSize: "2rem",
+      fontSize: "1.5rem",
       textAlign: "left",
     },
   }));
-
   const classes = useStyles();
 
   const handleChange = e => {
     setChannel({ ...channel, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async e => {
+  const handleEdit = async e => {
     e.preventDefault();
     try {
       const { data } = await client.mutate({
-        mutation: CREATE_CHANNEL,
-        variables: { token: localStorage.getItem("token"), name: channelName },
+        mutation: UPDATE_CHANNEL,
+        variables: {
+          token: localStorage.getItem("token"),
+          name: channelName,
+          img: null,
+          channelId: id,
+        },
         refetchQueries: [
           {
             query: GET_USER_BY_TOKEN,
@@ -49,10 +75,10 @@ const CreateChannel = props => {
         ],
         awaitRefetchQueries: true,
       });
-      if (data.createChannel.id) {
-        setCurrentChannel({ id: data.createChannel.id, name: data.createChannel.name });
-        alert("채널이 생성되었습니다!");
-        props.history.push("/main");
+
+      if (data.updateChannel) {
+        setCurrentChannel({ ...currentChannel, name: channelName });
+        fetchData();
       }
     } catch (error) {
       alert(error.message);
@@ -60,12 +86,12 @@ const CreateChannel = props => {
   };
 
   return (
-    <Container className={classes.createChannelContainer} maxWidth="xs">
+    <Container className={classes.channelSettingsContainer} maxWidth="xs">
       <div>
         <Typography className={classes.title} component="h1" variant="h5">
-          채널 만들기
+          채널 설정
         </Typography>
-        <ValidatorForm ref={() => "form"} onSubmit={handleSubmit}>
+        <ValidatorForm ref={() => "form"} onSubmit={handleEdit}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextValidator
@@ -85,7 +111,7 @@ const CreateChannel = props => {
             </Grid>
             <Grid item xs={12}>
               <Button type="submit" fullWidth variant="contained" color="primary">
-                채널 생성하기
+                수정
               </Button>
             </Grid>
           </Grid>
@@ -95,4 +121,4 @@ const CreateChannel = props => {
   );
 };
 
-export default CreateChannel;
+export default ChannelSettings;

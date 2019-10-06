@@ -3,10 +3,15 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import IconButton from "@material-ui/core/IconButton";
 import SettingsIcon from "@material-ui/icons/Settings";
+import { Link as RouterLink } from "react-router-dom";
 
-const SettingChannel = () => {
+const ChannelSettingsBtn = () => {
   const ITEM_HEIGHT = 48;
-  const options = [{ name: "채널 관리" }, { name: "집사 관리" }];
+  const options = [
+    { name: "채널 관리", path: "/channelsettings" },
+    { name: "집사 관리", path: "/membersettings" },
+    { name: "채널 생성", path: "/addChannel" },
+  ];
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -35,7 +40,7 @@ const SettingChannel = () => {
         }}
       >
         {options.map(option => (
-          <MenuItem key={option.name} onClick={handleClose}>
+          <MenuItem to={option.path} component={RouterLink} key={option.name} onClick={handleClose}>
             {option.name}
           </MenuItem>
         ))}
@@ -44,4 +49,4 @@ const SettingChannel = () => {
   );
 };
 
-export default SettingChannel;
+export default ChannelSettingsBtn;
