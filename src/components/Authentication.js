@@ -8,8 +8,15 @@ export const CurrentUserContext = createContext();
 const AuthenticationProvider = ({ history, children }) => {
   const client = useApolloClient();
 
-  const [currentUser, setCurrentUser] = useState({ email: "", name: "" });
-  const [currentChannel, setCurrentChannel] = useState({ channelId: "" });
+  const [currentUser, setCurrentUser] = useState({
+    email: "",
+    name: "",
+    channels: [],
+  });
+  const [currentChannel, setCurrentChannel] = useState({
+    id: "",
+    name: "",
+  });
 
   useEffect(() => {
     const jwt = localStorage.getItem("token");
@@ -22,19 +29,30 @@ const AuthenticationProvider = ({ history, children }) => {
           query: GET_USER_BY_TOKEN,
           variables: { token: localStorage.getItem("token") },
         });
-        setCurrentUser({ email: data.getUserByToken.email, name: data.getUserByToken.name });
+
+        setCurrentUser({
+          email: data.getUserByToken.email,
+          name: data.getUserByToken.name,
+          channels: data.getUserByToken.channels,
+        });
       } catch (error) {
         localStorage.removeItem("token");
         history.push("/");
       }
     };
     fetchData();
-  }, [client, history, currentUser.email, currentUser.name]);
+  }, [client, history, currentUser.channels, currentChannel]);
+
   if (currentUser.email === "") {
     return <div>loading...</div>;
   }
 
-  const value = { currentUser, currentChannel, setCurrentUser, setCurrentChannel };
+  const value = {
+    currentUser,
+    currentChannel,
+    setCurrentChannel,
+    setCurrentUser,
+  };
 
   return (
     <CurrentUserContext.Provider value={value}>
