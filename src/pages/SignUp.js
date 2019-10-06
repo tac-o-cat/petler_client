@@ -41,8 +41,7 @@ const SignUp = ({ history }) => {
         query: CHECK_UNIQUE_EMAIL,
         variables: { email: value },
       });
-
-      if (data.user) {
+      if (data.checkEmail) {
         return false;
       }
       return true;
