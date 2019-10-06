@@ -28,6 +28,7 @@ function App() {
           <Route path="/mypage" component={MyPage} />
           <Route path="/channelsettings" component={ChannelSettings} />
           <Route path="/membersettings" component={MemberSettings} />
+          <Route path="/addChannel" component={CreateChannel} />
         </LayoutWrapper>
       </Authentication>
       <Route component={NotFound} />

@@ -10,6 +10,7 @@ const ChannelSettingsBtn = () => {
   const options = [
     { name: "채널 관리", path: "/channelsettings" },
     { name: "집사 관리", path: "/membersettings" },
+    { name: "채널 생성", path: "/addChannel" },
   ];
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
