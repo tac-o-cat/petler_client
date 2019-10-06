@@ -6,6 +6,7 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import { Root, Header, Nav, Content, Footer } from "layout";
 import SelectChannel from "components/SelectChannel";
 import ChannelSettingsBtn from "components/ChannelSettingsBtn";
+import NavBar from "components/NavBar";
 
 const config = {
   navAnchor: "left",
@@ -79,7 +80,9 @@ const LayoutWrapper = props => {
         이곳은 네비게이션입니다
       </Nav>
       <Content>{children}</Content>
-      <Footer>이곳은 푸터푸터</Footer>
+      <Footer>
+        <NavBar />
+      </Footer>
     </Root>
   );
 };
