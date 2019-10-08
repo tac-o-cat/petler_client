@@ -2,9 +2,7 @@ import React, { useState, createContext } from "react";
 import TodoList from "components/TodoList";
 import Button from "@material-ui/core/Button";
 
-import FilterTodo from "components/FilterTodo";
-import FilterTodo2 from "components/FilterTodo2";
-
+import FilterByPet from "components/FilterByPet";
 import TodoDialog from "components/TodoDialog";
 
 export const TodoDialogContext = createContext();
@@ -33,8 +31,7 @@ const Main = () => {
       <Button variant="outlined" color="primary" onClick={dialogOpen}>
         할일 추가하기
       </Button>
-      {/* <FilterTodo />
-      <FilterTodo2 /> */}
+      <FilterByPet />
       <TodoList />
       <TodoDialog />
     </TodoDialogContext.Provider>

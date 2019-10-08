@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 /* eslint-disable camelcase */
 import React, { useState, useEffect, useContext } from "react";
-import { useApolloClient } from "@apollo/react-hooks";
+import { useApolloClient, useMutation } from "@apollo/react-hooks";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -19,7 +19,14 @@ import { ValidatorForm, TextValidator, SelectValidator } from "react-material-ui
 import RepeatDatePicker from "components/RepeatDatePicker";
 import { CurrentUserContext } from "components/Authentication";
 import { TodoDialogContext } from "pages/Main";
-import { GET_CHANNEL_INFO, CREATE_TODO, GET_TODO, UPDATE_TODO, DELETE_TODO } from "queries/queries";
+import {
+  GET_CHANNEL_INFO,
+  CREATE_TODO,
+  GET_TODO,
+  UPDATE_TODO,
+  DELETE_TODO,
+  GET_CHANNEL_TODOS,
+} from "queries/queries";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -74,34 +81,53 @@ function TodoDialog(props) {
     });
   };
 
+  const [updateTodo] = useMutation(UPDATE_TODO, {
+    onCompleted() {
+      handleClose();
+    },
+  });
+
+  const [createTodo] = useMutation(CREATE_TODO, {
+    onCompleted() {
+      handleClose();
+    },
+  });
+
   const handleSubmit = async e => {
     e.preventDefault();
-    const fetchData = async () => {
-      if (isEdit) {
-        const { data } = await client.mutate({
-          mutation: UPDATE_TODO,
-          variables: {
-            ...newTodo,
-            channelId: currentChannel.id,
-            todoId,
-            token: localStorage.getItem("token"),
+    if (isEdit) {
+      updateTodo({
+        variables: {
+          ...newTodo,
+          channelId: currentChannel.id,
+          todoId,
+          token: localStorage.getItem("token"),
+        },
+        refetchQueries: [
+          {
+            query: GET_CHANNEL_TODOS,
+            variables: { id: currentChannel.id },
           },
-          onCompleted: handleClose(),
-        });
-      } else {
-        const { data } = await client.mutate({
-          mutation: CREATE_TODO,
-          variables: {
-            ...newTodo,
-            channelId: currentChannel.id,
-            token: localStorage.getItem("token"),
+        ],
+        awaitRefetchQueries: true,
+      });
+    } else {
+      createTodo({
+        variables: {
+          ...newTodo,
+          channelId: currentChannel.id,
+          todoId,
+          token: localStorage.getItem("token"),
+        },
+        refetchQueries: [
+          {
+            query: GET_CHANNEL_TODOS,
+            variables: { id: currentChannel.id },
           },
-          onCompleted: handleClose(),
-        });
-      }
-    };
-
-    fetchData();
+        ],
+        awaitRefetchQueries: true,
+      });
+    }
   };
 
   const handleDelete = async () => {

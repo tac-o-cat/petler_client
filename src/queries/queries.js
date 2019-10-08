@@ -238,9 +238,9 @@ const GET_TODO = gql`
       id
       todo
       memo
-      pushDate
-      endDate
-      repeatDay
+      push_date
+      end_date
+      repeat_day
       is_done
     }
   }

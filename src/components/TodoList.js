@@ -1,7 +1,7 @@
 /* eslint-disable no-alert */
 import React, { useState, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { useApolloClient } from "@apollo/react-hooks";
+import { useApolloClient, useQuery } from "@apollo/react-hooks";
 import Checkbox from "@material-ui/core/Checkbox";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -31,18 +31,12 @@ const TodoList = props => {
   const { currentChannel } = useContext(CurrentUserContext);
   const { open, setOpen, setIsEdit, setTodoId } = useContext(TodoDialogContext);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await client.query({
-        query: GET_CHANNEL_TODOS,
-        variables: { id: currentChannel.id },
-      });
-      setTodos(data.channel.todos);
-    };
-    if (currentChannel.id) {
-      fetchData();
-    }
-  }, [currentChannel]);
+  const { loading, data, error } = useQuery(GET_CHANNEL_TODOS, {
+    variables: { id: currentChannel.id },
+    onCompleted({ channel }) {
+      setTodos(channel.todos);
+    },
+  });
 
   const handleChangeIsDone = async id => {
     const { data } = await client.mutate({
@@ -68,22 +62,23 @@ const TodoList = props => {
 
   return (
     <List className={classes.root}>
-      {todos.map(todo => (
-        <ListItem key={todo.id}>
-          <ListItemIcon>
-            <Checkbox checked={todo.is_done} onChange={() => handleChangeIsDone(todo.id)} />
-          </ListItemIcon>
-          <ListItemAvatar>
-            <Avatar src={todo.img} sizes="small" />
-          </ListItemAvatar>
-          <ListItemText primary={todo.todo} />
-          <ListItemSecondaryAction>
-            <IconButton edge="end" aria-label="create" onClick={() => openDialog(todo.id)}>
-              <CreateIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
-        </ListItem>
-      ))}
+      {!loading &&
+        data.channel.todos.map(todo => (
+          <ListItem key={todo.id}>
+            <ListItemIcon>
+              <Checkbox checked={todo.is_done} onChange={() => handleChangeIsDone(todo.id)} />
+            </ListItemIcon>
+            <ListItemAvatar>
+              <Avatar src={todo.img} sizes="small" />
+            </ListItemAvatar>
+            <ListItemText primary={todo.todo} />
+            <ListItemSecondaryAction>
+              <IconButton edge="end" aria-label="create" onClick={() => openDialog(todo.id)}>
+                <CreateIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+        ))}
     </List>
   );
 };

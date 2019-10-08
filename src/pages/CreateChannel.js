@@ -6,11 +6,10 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { CREATE_CHANNEL, GET_USER_BY_TOKEN } from "queries/queries";
-import { useApolloClient } from "@apollo/react-hooks";
+import { /* useApolloClient */ useMutation } from "@apollo/react-hooks";
 import { CurrentUserContext } from "components/Authentication";
 
 const CreateChannel = props => {
-  const client = useApolloClient();
   const { setCurrentChannel } = useContext(CurrentUserContext);
 
   const [channel, setChannel] = useState({ channelName: "" });
@@ -35,29 +34,27 @@ const CreateChannel = props => {
     setChannel({ ...channel, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault();
-    try {
-      const { data } = await client.mutate({
-        mutation: CREATE_CHANNEL,
-        variables: { token: localStorage.getItem("token"), name: channelName },
-        refetchQueries: [
-          {
-            query: GET_USER_BY_TOKEN,
-            variables: { token: localStorage.getItem("token") },
-          },
-        ],
-        awaitRefetchQueries: true,
-      });
-      if (data.createChannel.id) {
-        setCurrentChannel({ id: data.createChannel.id, name: data.createChannel.name });
-        alert("채널이 생성되었습니다!");
-        props.history.push("/main");
-      }
-    } catch (error) {
-      alert(error.message);
-    }
+    createChannel({
+      variables: { token: localStorage.getItem("token"), name: channelName },
+      refetchQueries: [
+        {
+          query: GET_USER_BY_TOKEN,
+          variables: { token: localStorage.getItem("token") },
+        },
+      ],
+      awaitRefetchQueries: true,
+    });
   };
+
+  const [createChannel, { loading, error }] = useMutation(CREATE_CHANNEL, {
+    onCompleted({ createChannel }) {
+      setCurrentChannel({ id: createChannel.id, name: createChannel.name });
+      alert("채널이 생성되었습니다!");
+      props.history.push("/main");
+    },
+  });
 
   return (
     <Container className={classes.createChannelContainer} maxWidth="xs">
