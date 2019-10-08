@@ -133,12 +133,128 @@ const DISMISS_MEMBER = gql`
     dismissUser(token: $token, dismissId: $dismissId, channelId: $channelId)
   }
 `;
+
 const CHECK_UNIQUE_MEMBER = gql`
   query($id: ID!, $email: String!) {
     channel(id: $id) {
       id
       checkUser(email: $email)
     }
+  }
+`;
+
+const GET_CHANNEL_TODOS = gql`
+  query($id: ID!) {
+    channel(id: $id) {
+      todos {
+        id
+        todo
+        is_done
+      }
+    }
+  }
+`;
+
+const GET_CHANNEL_INFO = gql`
+  query($id: ID!) {
+    channel(id: $id) {
+      users {
+        id
+        name
+      }
+      pets {
+        id
+        name
+      }
+    }
+  }
+`;
+
+const CREATE_TODO = gql`
+  mutation(
+    $token: String!
+    $todoId: ID
+    $todo: String!
+    $memo: String
+    $pushDate: Date
+    $endDate: Date
+    $repeatDay: String
+    $petId: ID!
+    $channelId: ID
+    $assignedId: ID!
+  ) {
+    createTodo(
+      todoInfo: {
+        token: $token
+        todoId: $todoId
+        todo: $todo
+        memo: $memo
+        pushDate: $pushDate
+        endDate: $endDate
+        repeatDay: $repeatDay
+        petId: $petId
+        channelId: $channelId
+        assignedId: $assignedId
+      }
+    ) {
+      todo
+    }
+  }
+`;
+
+const UPDATE_TODO = gql`
+  mutation(
+    $token: String!
+    $todoId: ID
+    $todo: String!
+    $memo: String
+    $pushDate: Date
+    $endDate: Date
+    $repeatDay: String
+    $petId: ID!
+    $channelId: ID
+    $assignedId: ID!
+  ) {
+    updateTodo(
+      updateTodoInfo: {
+        token: $token
+        todoId: $todoId
+        todo: $todo
+        memo: $memo
+        pushDate: $pushDate
+        endDate: $endDate
+        repeatDay: $repeatDay
+        petId: $petId
+        channelId: $channelId
+        assignedId: $assignedId
+      }
+    )
+  }
+`;
+
+const GET_TODO = gql`
+  query($id: ID!) {
+    todo(id: $id) {
+      id
+      todo
+      memo
+      pushDate
+      endDate
+      repeatDay
+      is_done
+    }
+  }
+`;
+
+const DELETE_TODO = gql`
+  mutation($token: String!, $id: ID!) {
+    deleteTodo(token: $token, id: $id)
+  }
+`;
+
+const IS_DONE_TODO = gql`
+  mutation($token: String!, $id: ID!) {
+    isDoneTodo(token: $token, id: $id)
   }
 `;
 
@@ -157,4 +273,11 @@ export {
   CHANNEL_MEMBERS,
   DISMISS_MEMBER,
   CHECK_UNIQUE_MEMBER,
+  GET_CHANNEL_TODOS,
+  GET_CHANNEL_INFO,
+  CREATE_TODO,
+  UPDATE_TODO,
+  GET_TODO,
+  DELETE_TODO,
+  IS_DONE_TODO,
 };
