@@ -6,7 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { CREATE_CHANNEL, GET_USER_BY_TOKEN } from "queries/queries";
-import { /* useApolloClient */ useMutation } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/react-hooks";
 import { CurrentUserContext } from "components/Authentication";
 
 const CreateChannel = props => {
@@ -34,6 +34,14 @@ const CreateChannel = props => {
     setChannel({ ...channel, [e.target.name]: e.target.value });
   };
 
+  const [createChannel] = useMutation(CREATE_CHANNEL, {
+    onCompleted(data) {
+      setCurrentChannel({ id: data.createChannel.id, name: data.createChannel.name });
+      alert("채널이 생성되었습니다!");
+      props.history.push("/main");
+    },
+  });
+
   const handleSubmit = e => {
     e.preventDefault();
     createChannel({
@@ -47,14 +55,6 @@ const CreateChannel = props => {
       awaitRefetchQueries: true,
     });
   };
-
-  const [createChannel, { loading, error }] = useMutation(CREATE_CHANNEL, {
-    onCompleted({ createChannel }) {
-      setCurrentChannel({ id: createChannel.id, name: createChannel.name });
-      alert("채널이 생성되었습니다!");
-      props.history.push("/main");
-    },
-  });
 
   return (
     <Container className={classes.createChannelContainer} maxWidth="xs">

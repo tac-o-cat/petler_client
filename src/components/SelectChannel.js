@@ -7,6 +7,8 @@ import ListItemText from "@material-ui/core/ListItemText";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import { CurrentUserContext } from "components/Authentication";
+import { useQuery } from "@apollo/react-hooks";
+import { GET_USER_BY_TOKEN } from "queries/queries";
 
 const SelectChannel = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -20,12 +22,19 @@ const SelectChannel = () => {
   }));
   const classes = useStyles();
 
-  const { currentUser, setCurrentChannel } = useContext(CurrentUserContext);
-  const { channels } = currentUser;
+  const { setCurrentChannel, currentChannel } = useContext(CurrentUserContext);
+  const { data, error, loading } = useQuery(GET_USER_BY_TOKEN, {
+    variables: { token: localStorage.getItem("token") },
+  });
 
   useEffect(() => {
-    if (channels.length) setCurrentChannel({ id: channels[0].id, name: channels[0].name });
-  }, [setCurrentChannel]);
+    if (data.getUserByToken.channels.length) {
+      setCurrentChannel({
+        id: data.getUserByToken.channels[0].id,
+        name: data.getUserByToken.channels[0].name,
+      });
+    }
+  }, []);
 
   const handleClickListItem = event => {
     setAnchorEl(event.currentTarget);
@@ -33,7 +42,10 @@ const SelectChannel = () => {
 
   const handleMenuItemClick = (event, index) => {
     setSelectedIndex(index);
-    setCurrentChannel({ id: channels[index].id, name: channels[index].name });
+    setCurrentChannel({
+      id: data.getUserByToken.channels[index].id,
+      name: data.getUserByToken.channels[index].name,
+    });
     setAnchorEl(null);
   };
 
@@ -45,15 +57,15 @@ const SelectChannel = () => {
     <div className={classes.root}>
       <List component="nav">
         <ListItem button onClick={handleClickListItem}>
-          {channels.length ? (
-            <ListItemText primary={channels[selectedIndex].name} />
+          {!loading && data.getUserByToken.channels.length ? (
+            <ListItemText primary={currentChannel.name} />
           ) : (
             <div>로딩중</div>
           )}
         </ListItem>
       </List>
       <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-        {channels.map((channel, index) => (
+        {data.getUserByToken.channels.map((channel, index) => (
           <MenuItem
             key={channel.name}
             selected={index === selectedIndex}

@@ -14,72 +14,48 @@ import {
   DISMISS_MEMBER,
   CHECK_UNIQUE_MEMBER,
 } from "queries/queries";
-import { useApolloClient } from "@apollo/react-hooks";
+import { useApolloClient, useQuery, useMutation } from "@apollo/react-hooks";
 import { CurrentUserContext } from "components/Authentication";
 
 const MemberSettings = () => {
   const client = useApolloClient();
   const { currentChannel, currentUser } = useContext(CurrentUserContext);
   const { id } = currentChannel;
-  const [petlers, setPetlers] = useState([]);
   const [inviteEmail, setInviteEmail] = useState("");
 
-  const fetchUsers = async () => {
-    try {
-      if (id) {
-        const { data } = await client.query({
-          query: CHANNEL_MEMBERS,
-          variables: { id },
-        });
-        setPetlers(data.channel.users);
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error);
-    }
-  };
-  const handleDelete = async userId => {
-    const { data } = await client.mutate({
-      mutation: DISMISS_MEMBER,
+  const { data, error, loading } = useQuery(CHANNEL_MEMBERS, { variables: { id } });
+  const [dismissMember] = useMutation(DISMISS_MEMBER);
+  const [addUserToChannel] = useMutation(ADD_USER_TO_CHANNEL);
+
+  const handleDelete = userId => {
+    dismissMember({
       variables: { token: localStorage.getItem("token"), dismissId: userId, channelId: id },
       refetchQueries: [{ query: CHANNEL_MEMBERS, variables: { id } }],
       awaitRefetchQueries: true,
     });
-    if (data.dismissUser) {
-      fetchUsers();
-    }
   };
   const handleChange = e => {
     setInviteEmail(e.target.value);
   };
   const handleSubmit = async e => {
     e.preventDefault();
-    try {
-      const { data } = await client.mutate({
-        mutation: ADD_USER_TO_CHANNEL,
-        variables: {
-          token: localStorage.getItem("token"),
-          email: inviteEmail,
-          channelId: currentChannel.id,
-        },
-        refetchQueries: [{ query: CHANNEL_MEMBERS, variables: { id } }],
-        awaitRefetchQueries: true,
-      });
-      if (data.addUserToChannel) {
-        alert("집사 추가가 완료되었습니다");
-        fetchUsers();
-      }
-    } catch (error) {
+    addUserToChannel({
+      variables: {
+        token: localStorage.getItem("token"),
+        email: inviteEmail,
+        channelId: currentChannel.id,
+      },
+      refetchQueries: [{ query: CHANNEL_MEMBERS, variables: { id } }],
+      awaitRefetchQueries: true,
+    });
+    if (error) {
       alert(error.message);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
-  });
-
-  useEffect(() => {
     ValidatorForm.addValidationRule("isMember", async value => {
+      // eslint-disable-next-line no-shadow
       const { data } = await client.query({
         query: CHECK_UNIQUE_EMAIL,
         variables: { email: value },
@@ -90,6 +66,7 @@ const MemberSettings = () => {
       return false;
     });
     ValidatorForm.addValidationRule("isChannelMember", async value => {
+      // eslint-disable-next-line no-shadow
       const { data } = await client.query({
         query: CHECK_UNIQUE_MEMBER,
         variables: { id, email: value },
@@ -132,31 +109,32 @@ const MemberSettings = () => {
         </Typography>
         <ValidatorForm ref={() => "form"} onSubmit={handleSubmit} debounceTime={1000}>
           <Grid container spacing={2}>
-            {petlers
-              .filter(petler => petler.name !== currentUser.name)
-              .map(petler => (
-                <Fragment key={`${petler.id}container`}>
-                  <Grid item xs={3} key={`${petler.id}ImageGrid`}>
-                    <Avatar alt={petler.name} src={petler.img} className={classes.avatar} />
-                  </Grid>
-                  <Grid item xs={5} key={`${petler.id}nameGrid`}>
-                    {petler.name}
-                  </Grid>
-                  <Grid item xs={4} key={`${petler.id}btnGrid`}>
-                    <Button
-                      key={`${petler.id}btn`}
-                      fullWidth
-                      variant="contained"
-                      color="secondary"
-                      onClick={() => {
-                        handleDelete(petler.id);
-                      }}
-                    >
-                      내보내기
-                    </Button>
-                  </Grid>
-                </Fragment>
-              ))}
+            {!loading &&
+              data.channel.users
+                .filter(petler => petler.name !== currentUser)
+                .map(petler => (
+                  <Fragment key={`${petler.id}container`}>
+                    <Grid item xs={3} key={`${petler.id}ImageGrid`}>
+                      <Avatar alt={petler.name} src={petler.img} className={classes.avatar} />
+                    </Grid>
+                    <Grid item xs={5} key={`${petler.id}nameGrid`}>
+                      {petler.name}
+                    </Grid>
+                    <Grid item xs={4} key={`${petler.id}btnGrid`}>
+                      <Button
+                        key={`${petler.id}btn`}
+                        fullWidth
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => {
+                          handleDelete(petler.id);
+                        }}
+                      >
+                        내보내기
+                      </Button>
+                    </Grid>
+                  </Fragment>
+                ))}
             <Grid item xs={8}>
               <TextValidator
                 label="집사 초대"
