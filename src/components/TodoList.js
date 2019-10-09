@@ -1,5 +1,5 @@
 /* eslint-disable no-alert */
-import React, { useState, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useApolloClient, useQuery } from "@apollo/react-hooks";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -14,7 +14,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CreateIcon from "@material-ui/icons/Create";
 import { CurrentUserContext } from "components/Authentication";
 import { TodoDialogContext } from "pages/Main";
-import { GET_CHANNEL_TODOS, IS_DONE_TODO } from "queries/queries";
+import { GET_CHANNEL_TODOS, IS_DONE_TODO, TODO_SUBSCRIPTION } from "queries/queries";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,14 +24,40 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const TodoList = props => {
+const TodoList = () => {
   const classes = useStyles();
   const client = useApolloClient();
+
   const { currentChannel } = useContext(CurrentUserContext);
   const { open, setOpen, setIsEdit, setTodoId, selectedPetId } = useContext(TodoDialogContext);
 
-  const { loading, data } = useQuery(GET_CHANNEL_TODOS, {
+  const { subscribeToMore, loading, data } = useQuery(GET_CHANNEL_TODOS, {
     variables: { id: currentChannel.id },
+  });
+
+  useEffect(() => {
+    // props.subscribeToNewComments();
+    subscribeToMore({
+      document: TODO_SUBSCRIPTION,
+      variables: { id: currentChannel.id },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) {
+          return prev;
+        }
+        const newFeedItem = subscriptionData.data.todo.data;
+
+        if (!prev.channel.todos.find(todo => todo.id === newFeedItem.id)) {
+          const result = {
+            channel: {
+              todos: [...prev.channel.todos, newFeedItem],
+              __typename: "Channel",
+            },
+          };
+          return result;
+        }
+        return prev;
+      },
+    });
   });
 
   const handleChangeIsDone = async id => {

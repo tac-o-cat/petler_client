@@ -205,6 +205,7 @@ const CREATE_TODO = gql`
         assignedId: $assignedId
       }
     ) {
+      id
       todo
     }
   }
@@ -250,6 +251,12 @@ const GET_TODO = gql`
       end_date
       repeat_day
       is_done
+      pets {
+        id
+      }
+      assignedId {
+        id
+      }
     }
   }
 `;
@@ -271,6 +278,23 @@ const GET_PETS = gql`
       pets {
         name
         id
+      }
+    }
+  }
+`;
+
+const TODO_SUBSCRIPTION = gql`
+  subscription($id: ID!) {
+    todo(channelId: $id) {
+      mutation
+      data {
+        id
+        todo
+        is_done
+        pets {
+          name
+          id
+        }
       }
     }
   }
@@ -299,4 +323,5 @@ export {
   DELETE_TODO,
   IS_DONE_TODO,
   GET_PETS,
+  TODO_SUBSCRIPTION,
 };
