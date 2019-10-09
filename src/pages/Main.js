@@ -11,6 +11,7 @@ const Main = () => {
   const [open, setOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [todoId, setTodoId] = useState(null);
+  const [selectedPetId, setSelectedPetId] = useState("showAll");
 
   const value = {
     open,
@@ -19,6 +20,8 @@ const Main = () => {
     setIsEdit,
     todoId,
     setTodoId,
+    selectedPetId,
+    setSelectedPetId,
   };
 
   const dialogOpen = () => {
