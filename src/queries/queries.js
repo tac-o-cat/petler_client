@@ -47,18 +47,21 @@ const GET_USER_BY_TOKEN = gql`
 
 const CREATE_PET_MUTATION = gql`
   mutation(
+    $token: String!
     $name: String!
     $gender: String
     $age: String
     $type: String
     $typeDetail: String
     $intro: String
-    $img: String
+    $img: String!
     $todoColor: String!
     $cardCover: String
+    $channelId: ID!
   ) {
     createPet(
       petInfo: {
+        token: $token
         name: $name
         gender: $gender
         age: $age
@@ -68,6 +71,7 @@ const CREATE_PET_MUTATION = gql`
         img: $img
         todoColor: $todoColor
         cardCover: $cardCover
+        channelId: $channelId
       }
     ) {
       name
