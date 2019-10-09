@@ -5,7 +5,7 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import { CHECK_CURRENT_PASSWORD, UPDATE_PASSWORD } from "queries/queries";
-import { useApolloClient } from "@apollo/react-hooks";
+import { useApolloClient, useMutation } from "@apollo/react-hooks";
 
 const ChangePassword = ({ history }) => {
   const client = useApolloClient();
@@ -54,20 +54,17 @@ const ChangePassword = ({ history }) => {
       alert(error.message);
     }
   };
-  const handleEdit = async e => {
-    e.preventDefault();
-    try {
-      const { data } = await client.mutate({
-        mutation: UPDATE_PASSWORD,
-        variables: { token: localStorage.getItem("token"), password },
-      });
+  const [updatePassword] = useMutation(UPDATE_PASSWORD, {
+    onCompleted(data) {
       if (data.updatePassword) {
         alert("비밀번호가 변경되었습니다");
         history.push("/mypage");
       }
-    } catch (error) {
-      alert(error.message);
-    }
+    },
+  });
+  const handleEdit = e => {
+    e.preventDefault();
+    updatePassword({ variables: { token: localStorage.getItem("token"), password } });
   };
 
   return (

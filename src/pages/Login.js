@@ -12,11 +12,9 @@ import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { LOGIN_QUERY } from "queries/queries";
-import { useApolloClient } from "@apollo/react-hooks";
+import { useLazyQuery } from "@apollo/react-hooks";
 
 const Login = ({ history }) => {
-  const client = useApolloClient();
-
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -39,26 +37,25 @@ const Login = ({ history }) => {
   const handleChange = e => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
-  // submit 버튼에 대한 이벤트 핸들러
-  const handleSubmit = async e => {
-    e.preventDefault();
-    try {
-      const { data } = await client.query({
-        query: LOGIN_QUERY,
-        variables: { email, password },
-      });
+
+  const [login] = useLazyQuery(LOGIN_QUERY, {
+    onCompleted(data) {
       if (data) {
         localStorage.setItem("token", data.login.token);
-        if (data.login.channel.length) {
-          history.push("/main");
-        } else {
-          history.push("/createChannel");
-        }
+        if (data.login.channel.length) history.push("/main");
+        else history.push("/createChannel");
       }
-    } catch (error) {
-      // eslint-disable-next-line no-alert
+    },
+    onError(error) {
       alert(error.message);
-    }
+    },
+  });
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    login({
+      variables: { email, password },
+    });
   };
 
   const useStyles = makeStyles(theme => ({

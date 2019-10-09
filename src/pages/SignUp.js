@@ -10,7 +10,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import ImageSelector from "components/ImageSelector";
 import UploadProfilePic from "components/UploadProfilePic";
 import { SIGN_UP_MUTATION, CHECK_UNIQUE_EMAIL } from "queries/queries";
-import { useApolloClient } from "@apollo/react-hooks";
+import { useApolloClient, useMutation } from "@apollo/react-hooks";
 
 const SignUp = ({ history }) => {
   const client = useApolloClient();
@@ -54,24 +54,23 @@ const SignUp = ({ history }) => {
   };
 
   /* submit 버튼 이벤트 핸들러 - 클릭 시 mutation 보냄 */
+  const [signUpMutation, { error }] = useMutation(SIGN_UP_MUTATION, {
+    onCompleted({ signUp }) {
+      if (signUp.name) {
+        alert("회원가입이 완료되었습니다.");
+        history.push("/");
+      }
+    },
+  });
+
   const handleSubmit = async e => {
     e.preventDefault();
-
     const copiedUser = { ...user };
     if (file) {
       copiedUser.img = await UploadProfilePic(file);
     }
-
-    try {
-      const { data } = await client.mutate({
-        mutation: SIGN_UP_MUTATION,
-        variables: { ...copiedUser },
-      });
-      if (data.signUp.name) {
-        alert("회원가입이 완료되었습니다.");
-        history.push("/");
-      }
-    } catch (error) {
+    signUpMutation({ variables: { ...copiedUser } });
+    if (error) {
       alert(error.message);
     }
   };

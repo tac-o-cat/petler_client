@@ -8,13 +8,10 @@ import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import { CurrentUserContext } from "components/Authentication";
 import { UPDATE_CHANNEL, GET_USER_BY_TOKEN } from "queries/queries";
-import { useApolloClient } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/react-hooks";
 
 const ChannelSettings = () => {
-  const client = useApolloClient();
-  const { currentChannel, setCurrentChannel, currentUser, setCurrentUser } = useContext(
-    CurrentUserContext,
-  );
+  const { currentChannel, setCurrentChannel } = useContext(CurrentUserContext);
   const { id, name } = currentChannel;
 
   const [channel, setChannel] = useState({ channelName: "" });
@@ -23,19 +20,6 @@ const ChannelSettings = () => {
   useEffect(() => {
     setChannel({ channelName: name });
   }, [name]);
-
-  const fetchData = async () => {
-    try {
-      const { data } = await client.query({
-        query: GET_USER_BY_TOKEN,
-        variables: { token: localStorage.getItem("token") },
-      });
-      setCurrentUser({ ...currentUser, channels: data.getUserByToken.channels });
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error);
-    }
-  };
 
   const useStyles = makeStyles(theme => ({
     channelSettingsContainer: {
@@ -56,33 +40,30 @@ const ChannelSettings = () => {
     setChannel({ ...channel, [e.target.name]: e.target.value });
   };
 
-  const handleEdit = async e => {
-    e.preventDefault();
-    try {
-      const { data } = await client.mutate({
-        mutation: UPDATE_CHANNEL,
-        variables: {
-          token: localStorage.getItem("token"),
-          name: channelName,
-          img: null,
-          channelId: id,
-        },
-        refetchQueries: [
-          {
-            query: GET_USER_BY_TOKEN,
-            variables: { token: localStorage.getItem("token") },
-          },
-        ],
-        awaitRefetchQueries: true,
-      });
-
+  const [updateChannel] = useMutation(UPDATE_CHANNEL, {
+    variables: {
+      token: localStorage.getItem("token"),
+      name: channelName,
+      img: null,
+      channelId: id,
+    },
+    refetchQueries: [
+      {
+        query: GET_USER_BY_TOKEN,
+        variables: { token: localStorage.getItem("token") },
+      },
+    ],
+    awaitRefetchQueries: true,
+    onCompleted(data) {
       if (data.updateChannel) {
         setCurrentChannel({ ...currentChannel, name: channelName });
-        fetchData();
       }
-    } catch (error) {
-      alert(error.message);
-    }
+    },
+  });
+
+  const handleEdit = async e => {
+    e.preventDefault();
+    updateChannel();
   };
 
   return (
