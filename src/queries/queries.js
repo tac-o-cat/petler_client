@@ -154,6 +154,10 @@ const GET_CHANNEL_TODOS = gql`
         id
         todo
         is_done
+        pets {
+          name
+          id
+        }
       }
     }
   }
@@ -261,6 +265,16 @@ const IS_DONE_TODO = gql`
     isDoneTodo(token: $token, id: $id)
   }
 `;
+const GET_PETS = gql`
+  query($id: ID!) {
+    channel(id: $id) {
+      pets {
+        name
+        id
+      }
+    }
+  }
+`;
 
 export {
   LOGIN_QUERY,
@@ -284,4 +298,5 @@ export {
   GET_TODO,
   DELETE_TODO,
   IS_DONE_TODO,
+  GET_PETS,
 };

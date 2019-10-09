@@ -10,7 +10,7 @@ import UploadProfilePic from "components/UploadProfilePic";
 import ImageSelector from "components/ImageSelector";
 import { CirclePicker } from "react-color";
 import { useMutation } from "@apollo/react-hooks";
-import { CREATE_PET_MUTATION } from "queries/queries";
+import { CREATE_PET_MUTATION, GET_PETS } from "queries/queries";
 import { CurrentUserContext } from "components/Authentication";
 
 // todo: 펫 프로필 생성 후 로직. 어느 페이지로 리다이렉트할지?
@@ -87,6 +87,13 @@ const CreatePetProfile = ({ history }) => {
         token: localStorage.getItem("token"),
         channelId: currentChannel.id,
       },
+      refetchQueries: [
+        {
+          query: GET_PETS,
+          variables: { id: currentChannel.id },
+        },
+      ],
+      awaitRefetchQueries: true,
     });
   };
 

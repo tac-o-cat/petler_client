@@ -1,5 +1,5 @@
 /* eslint-disable no-alert */
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useApolloClient, useQuery } from "@apollo/react-hooks";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -27,15 +27,11 @@ const useStyles = makeStyles(theme => ({
 const TodoList = props => {
   const classes = useStyles();
   const client = useApolloClient();
-  const [todos, setTodos] = useState([]);
   const { currentChannel } = useContext(CurrentUserContext);
-  const { open, setOpen, setIsEdit, setTodoId } = useContext(TodoDialogContext);
+  const { open, setOpen, setIsEdit, setTodoId, selectedPetId } = useContext(TodoDialogContext);
 
-  const { loading, data, error } = useQuery(GET_CHANNEL_TODOS, {
+  const { loading, data } = useQuery(GET_CHANNEL_TODOS, {
     variables: { id: currentChannel.id },
-    onCompleted({ channel }) {
-      setTodos(channel.todos);
-    },
   });
 
   const handleChangeIsDone = async id => {
@@ -63,22 +59,29 @@ const TodoList = props => {
   return (
     <List className={classes.root}>
       {!loading &&
-        data.channel.todos.map(todo => (
-          <ListItem key={todo.id}>
-            <ListItemIcon>
-              <Checkbox checked={todo.is_done} onChange={() => handleChangeIsDone(todo.id)} />
-            </ListItemIcon>
-            <ListItemAvatar>
-              <Avatar src={todo.img} sizes="small" />
-            </ListItemAvatar>
-            <ListItemText primary={todo.todo} />
-            <ListItemSecondaryAction>
-              <IconButton edge="end" aria-label="create" onClick={() => openDialog(todo.id)}>
-                <CreateIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        ))}
+        data.channel.todos
+          .filter(todo => {
+            if (selectedPetId !== "showAll") {
+              return todo.pets.id === selectedPetId;
+            }
+            return true;
+          })
+          .map(todo => (
+            <ListItem key={todo.id}>
+              <ListItemIcon>
+                <Checkbox checked={todo.is_done} onChange={() => handleChangeIsDone(todo.id)} />
+              </ListItemIcon>
+              <ListItemAvatar>
+                <Avatar src={todo.img} sizes="small" />
+              </ListItemAvatar>
+              <ListItemText primary={todo.todo} />
+              <ListItemSecondaryAction>
+                <IconButton edge="end" aria-label="create" onClick={() => openDialog(todo.id)}>
+                  <CreateIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
     </List>
   );
 };
