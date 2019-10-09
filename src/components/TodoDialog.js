@@ -93,6 +93,12 @@ function TodoDialog(props) {
     },
   });
 
+  const [deleteTodo] = useMutation(DELETE_TODO, {
+    onCompleted() {
+      handleClose();
+    },
+  });
+
   const handleSubmit = async e => {
     e.preventDefault();
     if (isEdit) {
@@ -130,14 +136,19 @@ function TodoDialog(props) {
     }
   };
 
-  const handleDelete = async () => {
-    const { data } = await client.mutate({
-      mutation: DELETE_TODO,
+  const handleDelete = () => {
+    deleteTodo({
       variables: {
         id: todoId,
         token: localStorage.getItem("token"),
       },
-      onCompleted: handleClose(),
+      refetchQueries: [
+        {
+          query: GET_CHANNEL_TODOS,
+          variables: { id: currentChannel.id },
+        },
+      ],
+      awaitRefetchQueries: true,
     });
   };
 
