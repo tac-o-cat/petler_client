@@ -38,7 +38,7 @@ const CreateChannel = props => {
     onCompleted(data) {
       setCurrentChannel({ id: data.createChannel.id, name: data.createChannel.name });
       alert("채널이 생성되었습니다!");
-      props.history.push("/main");
+      props.history.push("/createpetprofile");
     },
   });
 
@@ -55,7 +55,6 @@ const CreateChannel = props => {
       awaitRefetchQueries: true,
     });
   };
-
   return (
     <Container className={classes.createChannelContainer} maxWidth="xs">
       <div>
