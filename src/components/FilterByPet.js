@@ -1,54 +1,41 @@
 /* eslint-disable no-alert */
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { useQuery } from "@apollo/react-hooks";
-import { gql } from "apollo-boost";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
-import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
-import Chip from "@material-ui/core/Chip";
 import { CurrentUserContext } from "components/Authentication";
+import { TodoDialogContext } from "pages/Main";
+import { GET_PETS } from "queries/queries";
 
 const FilterByPet = () => {
   const { currentChannel } = useContext(CurrentUserContext);
-  const [personName, setPersonName] = useState([]);
+  const { selectedPetId, setSelectedPetId } = useContext(TodoDialogContext);
 
   const handleChange = event => {
-    setPersonName(event.target.value);
+    setSelectedPetId(event.target.value);
   };
 
-  const GET_PETS = gql`
-    query($id: ID!) {
-      channel(id: $id) {
-        pets {
-          name
-        }
-      }
-    }
-  `;
-
-  const { loading, data, error } = useQuery(GET_PETS, { variables: { id: currentChannel.id } });
+  const { loading, data } = useQuery(GET_PETS, { variables: { id: currentChannel.id } });
 
   return (
     <FormControl>
-      <InputLabel htmlFor="select-multiple-chip">펫 필터</InputLabel>
+      <InputLabel htmlFor="pet-filter">펫 필터</InputLabel>
       <Select
-        multiple
-        value={personName}
+        value={selectedPetId}
         onChange={handleChange}
-        input={<Input id="select-multiple-chip" />}
-        renderValue={selected => (
-          <div>
-            {selected.map(value => (
-              <Chip key={value} label={value} />
-            ))}
-          </div>
-        )}
+        inputProps={{
+          name: "pet",
+          id: "pet-filter",
+        }}
       >
+        <MenuItem key="showAll" value="showAll">
+          전체보기
+        </MenuItem>
         {!loading &&
           data.channel.pets.map(pet => (
-            <MenuItem key={pet.name} value={pet.name}>
+            <MenuItem key={pet.name} value={pet.id}>
               {pet.name}
             </MenuItem>
           ))}
