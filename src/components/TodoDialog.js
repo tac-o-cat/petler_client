@@ -28,6 +28,16 @@ import {
   GET_CHANNEL_TODOS,
 } from "queries/queries";
 
+const INITIAL_STATE = {
+  todo: "",
+  memo: "",
+  pushDate: null,
+  endDate: null,
+  repeatDay: "",
+  petId: "",
+  assignedId: "",
+};
+
 const useStyles = makeStyles(theme => ({
   root: {
     padding: "1rem",
@@ -40,15 +50,7 @@ function TodoDialog(props) {
   const { currentChannel } = useContext(CurrentUserContext);
   const { open, setOpen, isEdit, todoId } = useContext(TodoDialogContext);
 
-  const [newTodo, setNewTodo] = useState({
-    todo: "",
-    memo: "",
-    pushDate: null,
-    endDate: null,
-    repeatDay: "",
-    petId: "",
-    assignedId: "",
-  });
+  const [newTodo, setNewTodo] = useState(INITIAL_STATE);
   const [pets, setPets] = useState([]);
   const [users, setUsers] = useState([]);
   const [isRepeat, setIsRepeat] = useState(false);
@@ -56,6 +58,7 @@ function TodoDialog(props) {
   const { todo, memo, pushDate, endDate } = newTodo;
 
   const handleClose = () => {
+    setNewTodo(INITIAL_STATE);
     setOpen(false);
   };
 
