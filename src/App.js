@@ -10,6 +10,7 @@ import {
   MyPage,
   ChannelSettings,
   MemberSettings,
+  CreatePetProfile,
 } from "pages";
 import LayoutWrapper from "layout/LayoutWrapper";
 import { Authentication } from "components/Authentication";
@@ -29,6 +30,7 @@ function App() {
           <Route path="/channelsettings" component={ChannelSettings} />
           <Route path="/membersettings" component={MemberSettings} />
           <Route path="/addChannel" component={CreateChannel} />
+          <Route path="/createpetprofile" component={CreatePetProfile} />
         </LayoutWrapper>
       </Authentication>
       <Route component={NotFound} />

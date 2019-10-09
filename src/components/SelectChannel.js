@@ -23,7 +23,7 @@ const SelectChannel = () => {
   const classes = useStyles();
 
   const { setCurrentChannel, currentChannel } = useContext(CurrentUserContext);
-  const { data, error, loading } = useQuery(GET_USER_BY_TOKEN, {
+  const { data, loading } = useQuery(GET_USER_BY_TOKEN, {
     variables: { token: localStorage.getItem("token") },
   });
 
@@ -34,7 +34,7 @@ const SelectChannel = () => {
         name: data.getUserByToken.channels[0].name,
       });
     }
-  }, []);
+  }, [data.getUserByToken.channels]);
 
   const handleClickListItem = event => {
     setAnchorEl(event.currentTarget);

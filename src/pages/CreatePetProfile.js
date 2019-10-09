@@ -1,5 +1,5 @@
 /* eslint-disable no-alert */
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import { ValidatorForm, TextValidator, SelectValidator } from "react-material-ui-form-validator";
@@ -9,13 +9,13 @@ import { makeStyles } from "@material-ui/core/styles";
 import UploadProfilePic from "components/UploadProfilePic";
 import ImageSelector from "components/ImageSelector";
 import { CirclePicker } from "react-color";
-import { useApolloClient } from "@apollo/react-hooks";
+import { useMutation } from "@apollo/react-hooks";
 import { CREATE_PET_MUTATION } from "queries/queries";
+import { CurrentUserContext } from "components/Authentication";
 
 // todo: 펫 프로필 생성 후 로직. 어느 페이지로 리다이렉트할지?
-const CreatePetProfile = () => {
-  const client = useApolloClient();
-
+const CreatePetProfile = ({ history }) => {
+  const { currentChannel } = useContext(CurrentUserContext);
   const [file, setFile] = useState("");
   /* 펫 정보가 담긴 state 설정 */
   const [pet, setPet] = useState({
@@ -66,27 +66,28 @@ const CreatePetProfile = () => {
     const reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]);
   };
+
+  const [createPetMutation] = useMutation(CREATE_PET_MUTATION, {
+    onCompleted(data) {
+      if (data) {
+        history.push("/main");
+      }
+    },
+  });
   /* submit 버튼 이벤트 핸들러 - 클릭 시 mutation 보냄 */
   const handleSubmit = async e => {
     e.preventDefault();
-
     const copiedPet = { ...pet };
     if (file) {
       copiedPet.img = await UploadProfilePic(file);
     }
-
-    try {
-      const { data } = await client.mutate({
-        mutation: CREATE_PET_MUTATION,
-        variables: {
-          ...copiedPet,
-        },
-      });
-      // 펫 프로필 생성 후 리다이렉트 할 페이지가 어디인지?
-      console.log(data);
-    } catch (error) {
-      alert(error.message);
-    }
+    createPetMutation({
+      variables: {
+        ...copiedPet,
+        token: localStorage.getItem("token"),
+        channelId: currentChannel.id,
+      },
+    });
   };
 
   /* style 적용 */
