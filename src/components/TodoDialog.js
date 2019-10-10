@@ -4,7 +4,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { useApolloClient, useMutation } from "@apollo/react-hooks";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import DeleteIcon from "@material-ui/icons/Delete";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -28,34 +27,40 @@ import {
   GET_CHANNEL_TODOS,
 } from "queries/queries";
 
+const INITIAL_STATE = {
+  todo: "",
+  memo: "",
+  push_date: null,
+  end_date: null,
+  repeat_day: "",
+  petId: "",
+  assignedId: "",
+  pets: [],
+};
+
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: "1rem",
+    padding: "0 24px 24px",
   },
 }));
 
 function TodoDialog(props) {
   const client = useApolloClient();
   const classes = useStyles();
+
   const { currentChannel } = useContext(CurrentUserContext);
   const { open, setOpen, isEdit, todoId } = useContext(TodoDialogContext);
 
-  const [newTodo, setNewTodo] = useState({
-    todo: "",
-    memo: "",
-    pushDate: null,
-    endDate: null,
-    repeatDay: "",
-    petId: "",
-    assignedId: "",
-  });
+  const [newTodo, setNewTodo] = useState(INITIAL_STATE);
   const [pets, setPets] = useState([]);
   const [users, setUsers] = useState([]);
   const [isRepeat, setIsRepeat] = useState(false);
 
-  const { todo, memo, pushDate, endDate } = newTodo;
+  const { todo, memo, push_date, end_date } = newTodo;
 
   const handleClose = () => {
+    setNewTodo(INITIAL_STATE);
+    setIsRepeat(false);
     setOpen(false);
   };
 
@@ -76,8 +81,8 @@ function TodoDialog(props) {
 
     setNewTodo({
       ...newTodo,
-      endDate: moment(time).format(),
-      repeatDay: week,
+      end_date: moment(time).format(),
+      repeat_day: week,
     });
   };
 
@@ -88,6 +93,12 @@ function TodoDialog(props) {
   });
 
   const [createTodo] = useMutation(CREATE_TODO, {
+    onCompleted() {
+      handleClose();
+    },
+  });
+
+  const [deleteTodo] = useMutation(DELETE_TODO, {
     onCompleted() {
       handleClose();
     },
@@ -107,6 +118,10 @@ function TodoDialog(props) {
           {
             query: GET_CHANNEL_TODOS,
             variables: { id: currentChannel.id },
+          },
+          {
+            query: GET_TODO,
+            variables: { id: todoId },
           },
         ],
         awaitRefetchQueries: true,
@@ -130,14 +145,19 @@ function TodoDialog(props) {
     }
   };
 
-  const handleDelete = async () => {
-    const { data } = await client.mutate({
-      mutation: DELETE_TODO,
+  const handleDelete = () => {
+    deleteTodo({
       variables: {
         id: todoId,
         token: localStorage.getItem("token"),
       },
-      onCompleted: handleClose(),
+      refetchQueries: [
+        {
+          query: GET_CHANNEL_TODOS,
+          variables: { id: currentChannel.id },
+        },
+      ],
+      awaitRefetchQueries: true,
     });
   };
 
@@ -157,9 +177,9 @@ function TodoDialog(props) {
 
   useEffect(() => {
     if (isRepeat) {
-      setNewTodo({ ...newTodo, pushDate: "" });
+      setNewTodo({ ...newTodo, push_date: null, end_date: null });
     } else {
-      setNewTodo({ ...newTodo, repeatDay: "" });
+      setNewTodo({ ...newTodo, end_date: null, repeat_day: "" });
     }
   }, [isRepeat]);
 
@@ -169,27 +189,30 @@ function TodoDialog(props) {
         query: GET_TODO,
         variables: { id: todoId },
       });
-      setNewTodo(data.todo);
+      setNewTodo({ ...data.todo, petId: data.todo.pets.id });
+
+      if (data.todo.repeat_day) {
+        setIsRepeat(true);
+      }
     };
-    if (isEdit && todoId) {
+    if (open && isEdit && todoId) {
       fetchData();
     }
-  }, [isEdit, todoId]);
+  }, [open, isEdit, todoId]);
 
   return (
     <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
       <DialogTitle id="simple-dialog-title">
-        할일 {isEdit ? "수정" : "등록"}하기
-        {isEdit && (
-          <Button
-            onClick={handleDelete}
-            variant="contained"
-            color="secondary"
-            startIcon={<DeleteIcon />}
-          >
-            삭제하기
-          </Button>
-        )}
+        <Grid container spacing={0} direction="row" justify="space-between" alignItems="center">
+          <Grid item>할일 {isEdit ? "수정" : "등록"}하기</Grid>
+          <Grid item>
+            {isEdit && (
+              <Button onClick={handleDelete} variant="contained" color="secondary">
+                삭제
+              </Button>
+            )}
+          </Grid>
+        </Grid>
       </DialogTitle>
       <ValidatorForm
         className={classes.root}
@@ -225,6 +248,9 @@ function TodoDialog(props) {
               variant="outlined"
               margin="dense"
               onChange={handleChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
               value={newTodo.petId}
             >
               {pets.map(pet => (
@@ -262,18 +288,18 @@ function TodoDialog(props) {
                 <Grid item xs={12}>
                   <DateTimePicker
                     label="미리알림"
-                    value={pushDate}
+                    value={push_date}
                     onChange={date => {
-                      handleChangeDate(date, "pushDate");
+                      handleChangeDate(date, "push_date");
                     }}
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <DateTimePicker
                     label="마감일정"
-                    value={endDate}
+                    value={end_date}
                     onChange={date => {
-                      handleChangeDate(date, "endDate");
+                      handleChangeDate(date, "end_date");
                     }}
                   />
                 </Grid>

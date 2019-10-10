@@ -14,7 +14,7 @@ const WEEK_LIST = ["월", "화", "수", "목", "금", "토", "일"];
 
 function RepeatDatePicker(props) {
   const [time, setTime] = useState(props.todo.end_date);
-  const [week, setWeek] = useState(props.todo.repeat_day.split(","));
+  const [week, setWeek] = useState([...props.todo.repeat_day.split(",")]);
 
   const handleDateChange = slectedTime => {
     setTime(slectedTime);
@@ -31,11 +31,12 @@ function RepeatDatePicker(props) {
   useEffect(() => {
     const { isRepeat } = props;
     if (isRepeat) {
+      setTime(time);
       props.selectedRepeat({ time, week: week.join(",") });
     } else {
       props.selectedRepeat({ time: "", week: "" });
     }
-  }, [props.isRepeat, time, week]);
+  }, [time, week]);
 
   return (
     <MuiPickersUtilsProvider locale="ko" utils={MomentUtils}>
