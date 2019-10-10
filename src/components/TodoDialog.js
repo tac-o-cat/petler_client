@@ -31,9 +31,9 @@ import {
 const INITIAL_STATE = {
   todo: "",
   memo: "",
-  pushDate: null,
-  endDate: null,
-  repeatDay: "",
+  push_date: null,
+  end_date: null,
+  repeat_day: "",
   petId: "",
   assignedId: "",
 };
@@ -47,6 +47,7 @@ const useStyles = makeStyles(theme => ({
 function TodoDialog(props) {
   const client = useApolloClient();
   const classes = useStyles();
+
   const { currentChannel } = useContext(CurrentUserContext);
   const { open, setOpen, isEdit, todoId } = useContext(TodoDialogContext);
 
@@ -55,10 +56,11 @@ function TodoDialog(props) {
   const [users, setUsers] = useState([]);
   const [isRepeat, setIsRepeat] = useState(false);
 
-  const { todo, memo, pushDate, endDate } = newTodo;
+  const { todo, memo, push_date, end_date } = newTodo;
 
   const handleClose = () => {
     setNewTodo(INITIAL_STATE);
+    setIsRepeat(false);
     setOpen(false);
   };
 
@@ -79,8 +81,8 @@ function TodoDialog(props) {
 
     setNewTodo({
       ...newTodo,
-      endDate: moment(time).format(),
-      repeatDay: week,
+      end_date: moment(time).format(),
+      repeat_day: week,
     });
   };
 
@@ -116,6 +118,10 @@ function TodoDialog(props) {
           {
             query: GET_CHANNEL_TODOS,
             variables: { id: currentChannel.id },
+          },
+          {
+            query: GET_TODO,
+            variables: { id: todoId },
           },
         ],
         awaitRefetchQueries: true,
@@ -171,9 +177,9 @@ function TodoDialog(props) {
 
   useEffect(() => {
     if (isRepeat) {
-      setNewTodo({ ...newTodo, pushDate: "" });
+      setNewTodo({ ...newTodo, push_date: null, end_date: null });
     } else {
-      setNewTodo({ ...newTodo, repeatDay: "" });
+      setNewTodo({ ...newTodo, end_date: null, repeat_day: "" });
     }
   }, [isRepeat]);
 
@@ -183,12 +189,17 @@ function TodoDialog(props) {
         query: GET_TODO,
         variables: { id: todoId },
       });
+
       setNewTodo(data.todo);
+
+      if (data.todo.repeat_day) {
+        setIsRepeat(true);
+      }
     };
-    if (isEdit && todoId) {
+    if (open && isEdit && todoId) {
       fetchData();
     }
-  }, [isEdit, todoId]);
+  }, [open, isEdit, todoId]);
 
   return (
     <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
@@ -276,18 +287,18 @@ function TodoDialog(props) {
                 <Grid item xs={12}>
                   <DateTimePicker
                     label="미리알림"
-                    value={pushDate}
+                    value={push_date}
                     onChange={date => {
-                      handleChangeDate(date, "pushDate");
+                      handleChangeDate(date, "push_date");
                     }}
                   />
                 </Grid>
                 <Grid item xs={12}>
                   <DateTimePicker
                     label="마감일정"
-                    value={endDate}
+                    value={end_date}
                     onChange={date => {
-                      handleChangeDate(date, "endDate");
+                      handleChangeDate(date, "end_date");
                     }}
                   />
                 </Grid>

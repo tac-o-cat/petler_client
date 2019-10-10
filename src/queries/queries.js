@@ -184,9 +184,9 @@ const CREATE_TODO = gql`
     $todoId: ID
     $todo: String!
     $memo: String
-    $pushDate: Date
-    $endDate: Date
-    $repeatDay: String
+    $push_date: Date
+    $end_date: Date
+    $repeat_day: String
     $petId: ID!
     $channelId: ID
     $assignedId: ID!
@@ -197,9 +197,9 @@ const CREATE_TODO = gql`
         todoId: $todoId
         todo: $todo
         memo: $memo
-        pushDate: $pushDate
-        endDate: $endDate
-        repeatDay: $repeatDay
+        push_date: $push_date
+        end_date: $end_date
+        repeat_day: $repeat_day
         petId: $petId
         channelId: $channelId
         assignedId: $assignedId
@@ -216,9 +216,9 @@ const UPDATE_TODO = gql`
     $todoId: ID
     $todo: String!
     $memo: String
-    $pushDate: Date
-    $endDate: Date
-    $repeatDay: String
+    $push_date: Date
+    $end_date: Date
+    $repeat_day: String
     $petId: ID!
     $channelId: ID
     $assignedId: ID!
@@ -229,9 +229,9 @@ const UPDATE_TODO = gql`
         todoId: $todoId
         todo: $todo
         memo: $memo
-        pushDate: $pushDate
-        endDate: $endDate
-        repeatDay: $repeatDay
+        push_date: $push_date
+        end_date: $end_date
+        repeat_day: $repeat_day
         petId: $petId
         channelId: $channelId
         assignedId: $assignedId
