@@ -33,18 +33,18 @@ const INITIAL_STATE = {
   push_date: null,
   end_date: null,
   repeat_day: "",
-  petId: "",
-  assignedId: "",
+  pet_id: "",
+  assigned_id: "",
   pets: [],
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     padding: "0 24px 24px",
   },
 }));
 
-function TodoDialog(props) {
+const TodoDialog = () => {
   const client = useApolloClient();
   const classes = useStyles();
 
@@ -106,12 +106,13 @@ function TodoDialog(props) {
 
   const handleSubmit = async e => {
     e.preventDefault();
+
     if (isEdit) {
       updateTodo({
         variables: {
           ...newTodo,
           channel_id: currentChannel.id,
-          todo_id: todoId,
+          todo_id: newTodo.id,
           token: localStorage.getItem("token"),
         },
         refetchQueries: [
@@ -121,7 +122,11 @@ function TodoDialog(props) {
           },
           {
             query: GET_TODO,
-            variables: { id: todoId },
+            variables: {
+              todo_id: todoId,
+              id: currentChannel.id,
+              token: localStorage.getItem("token"),
+            },
           },
         ],
         awaitRefetchQueries: true,
@@ -153,7 +158,7 @@ function TodoDialog(props) {
       refetchQueries: [
         {
           query: GET_CHANNEL_TODOS,
-          variables: { id: currentChannel.id },
+          variables: { id: currentChannel.id, token: localStorage.getItem("token") },
         },
       ],
       awaitRefetchQueries: true,
@@ -166,7 +171,6 @@ function TodoDialog(props) {
         query: GET_CHANNEL_INFO,
         variables: { id: currentChannel.id, token: localStorage.getItem("token") },
       });
-      // console.log(data.channel);
       setPets(data.user.channels[0].pets);
       setUsers(data.user.channels[0].users);
     };
@@ -189,9 +193,12 @@ function TodoDialog(props) {
         query: GET_TODO,
         variables: { todo_id: todoId, id: currentChannel.id, token: localStorage.getItem("token") },
       });
-      setNewTodo({ ...data.todo, petId: data.todo.pets.id });
+      setNewTodo({
+        ...data.user.channels[0].todos[0],
+        pet_id: data.user.channels[0].todos[0].pets.id,
+      });
 
-      if (data.todo.repeat_day) {
+      if (data.user.channels[0].todos[0].repeat_day) {
         setIsRepeat(true);
       }
     };
@@ -251,7 +258,7 @@ function TodoDialog(props) {
               InputLabelProps={{
                 shrink: true,
               }}
-              value={newTodo.petId}
+              value={newTodo.pet_id}
             >
               {pets.map(pet => (
                 <MenuItem key={pet.id} value={pet.id}>
@@ -353,6 +360,6 @@ function TodoDialog(props) {
       </ValidatorForm>
     </Dialog>
   );
-}
+};
 
 export default TodoDialog;
