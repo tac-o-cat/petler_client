@@ -262,9 +262,7 @@ const GET_TODO = gql`
           pets {
             id
           }
-          assignee {
-            id
-          }
+          assigned_id
         }
       }
     }
@@ -287,7 +285,16 @@ const GET_PETS = gql`
     user(token: $token) {
       channels(id: $id) {
         pets {
+          id
           name
+          gender
+          age
+          type
+          type_detail
+          intro
+          img
+          todo_color
+          card_cover
         }
       }
     }
