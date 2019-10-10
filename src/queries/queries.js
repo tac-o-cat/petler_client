@@ -250,6 +250,10 @@ const GET_TODO = gql`
       end_date
       repeat_day
       is_done
+      pets {
+        id
+        name
+      }
     }
   }
 `;

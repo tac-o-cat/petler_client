@@ -4,7 +4,6 @@ import React, { useState, useEffect, useContext } from "react";
 import { useApolloClient, useMutation } from "@apollo/react-hooks";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import DeleteIcon from "@material-ui/icons/Delete";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -36,6 +35,7 @@ const INITIAL_STATE = {
   repeat_day: "",
   petId: "",
   assignedId: "",
+  pets: [],
 };
 
 const useStyles = makeStyles(theme => ({
@@ -189,8 +189,7 @@ function TodoDialog(props) {
         query: GET_TODO,
         variables: { id: todoId },
       });
-
-      setNewTodo(data.todo);
+      setNewTodo({ ...data.todo, petId: data.todo.pets.id });
 
       if (data.todo.repeat_day) {
         setIsRepeat(true);
@@ -249,6 +248,9 @@ function TodoDialog(props) {
               variant="outlined"
               margin="dense"
               onChange={handleChange}
+              InputLabelProps={{
+                shrink: true,
+              }}
               value={newTodo.petId}
             >
               {pets.map(pet => (
