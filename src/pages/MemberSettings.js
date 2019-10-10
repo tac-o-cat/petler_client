@@ -77,7 +77,6 @@ const MemberSettings = () => {
         query: CHECK_UNIQUE_MEMBER,
         variables: { token: localStorage.getItem("token"), id, email: value },
       });
-      console.log(data);
       if (data.user.channels[0].checkUser) {
         return false;
       }
