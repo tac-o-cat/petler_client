@@ -40,7 +40,7 @@ const INITIAL_STATE = {
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: "1rem",
+    padding: "0 24px 24px",
   },
 }));
 
@@ -204,17 +204,16 @@ function TodoDialog(props) {
   return (
     <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
       <DialogTitle id="simple-dialog-title">
-        할일 {isEdit ? "수정" : "등록"}하기
-        {isEdit && (
-          <Button
-            onClick={handleDelete}
-            variant="contained"
-            color="secondary"
-            startIcon={<DeleteIcon />}
-          >
-            삭제하기
-          </Button>
-        )}
+        <Grid container spacing={0} direction="row" justify="space-between" alignItems="center">
+          <Grid item>할일 {isEdit ? "수정" : "등록"}하기</Grid>
+          <Grid item>
+            {isEdit && (
+              <Button onClick={handleDelete} variant="contained" color="secondary">
+                삭제
+              </Button>
+            )}
+          </Grid>
+        </Grid>
       </DialogTitle>
       <ValidatorForm
         className={classes.root}
