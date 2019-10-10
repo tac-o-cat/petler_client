@@ -29,7 +29,7 @@ const TodoList = () => {
   const client = useApolloClient();
 
   const { currentChannel } = useContext(CurrentUserContext);
-  const { open, setOpen, setIsEdit, setTodoId, selectedPetId } = useContext(TodoDialogContext);
+  const { setOpen, setIsEdit, setTodoId, selectedPetId } = useContext(TodoDialogContext);
 
   const { subscribeToMore, loading, data } = useQuery(GET_CHANNEL_TODOS, {
     variables: { id: currentChannel.id, token: localStorage.getItem("token") },
@@ -41,7 +41,6 @@ const TodoList = () => {
       document: TODO_SUBSCRIPTION,
       variables: { id: currentChannel.id },
       updateQuery: (prev, { subscriptionData }) => {
-        console.log(subscriptionData.data, prev);
         if (!subscriptionData.data) {
           return prev;
         }
@@ -50,23 +49,20 @@ const TodoList = () => {
           subscriptionData.data.todo.mutation === "CREATE_TODO" &&
           !prev.user.channels[0].todos.find(todo => todo.id === newFeedItem.id)
         ) {
-          const result = {
+          return {
             user: {
               channels: [
                 {
-                  todos: [...prev.user.channels[0].todos, newFeedItem],
+                  todos: prev.user.channels[0].todos.concat(newFeedItem),
                   __typename: "Channel",
                 },
               ],
               __typename: "User",
             },
           };
-          // const result = { ...prev, { todos: [...prev.user.channels[0].todos, newFeedItem] }}
-          console.log(result);
-          return result;
         }
         if (subscriptionData.data.todo.mutation === "DELETE_TODO") {
-          const result = {
+          return {
             user: {
               channels: [
                 {
@@ -77,37 +73,24 @@ const TodoList = () => {
               __typename: "User",
             },
           };
-
-          return result;
         }
-
-        if (subscriptionData.data.todo.mutation === "UPDATE_TODO") {
-          console.log(subscriptionData.data.todo);
-        }
-        return prev;
-      },
-    });
-  });
-
-  useEffect(() => {
-    // props.subscribeToNewComments();
-    subscribeToMore({
-      document: TODO_SUBSCRIPTION,
-      variables: { id: currentChannel.id },
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) {
-          return prev;
-        }
-        const newFeedItem = subscriptionData.data.todo.data;
-
-        if (!prev.channel.todos.find(todo => todo.id === newFeedItem.id)) {
-          const result = {
-            channel: {
-              todos: [...prev.channel.todos, newFeedItem],
-              __typename: "Channel",
+        if (
+          subscriptionData.data.todo.mutation === "UPDATE_TODO" ||
+          subscriptionData.data.todo.mutation === "IS_DONE_TODO"
+        ) {
+          return {
+            user: {
+              channels: [
+                {
+                  todos: prev.user.channels[0].todos.map(todo => {
+                    return todo.id === subscriptionData.data.todo ? subscriptionData.data : todo;
+                  }),
+                  __typename: "Channel",
+                },
+              ],
+              __typename: "User",
             },
           };
-          return result;
         }
         return prev;
       },
@@ -115,7 +98,7 @@ const TodoList = () => {
   });
 
   const handleChangeIsDone = async id => {
-    const { data } = await client.mutate({
+    await client.mutate({
       mutation: IS_DONE_TODO,
       variables: {
         id,
