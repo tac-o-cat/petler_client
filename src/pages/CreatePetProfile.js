@@ -135,7 +135,11 @@ const CreatePetProfile = ({ location, history }) => {
         refetchQueries: [
           {
             query: GET_PETS,
-            variables: { id: currentChannel.id },
+            variables: { id: currentChannel.id, token: localStorage.getItem("token") },
+          },
+          {
+            query: GET_PET_PROFILE,
+            variables: { id: location.state.petId },
           },
         ],
         awaitRefetchQueries: true,
@@ -150,7 +154,7 @@ const CreatePetProfile = ({ location, history }) => {
         refetchQueries: [
           {
             query: GET_PETS,
-            variables: { id: currentChannel.id },
+            variables: { id: currentChannel.id, token: localStorage.getItem("token") },
           },
         ],
         awaitRefetchQueries: true,
