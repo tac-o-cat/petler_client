@@ -32,7 +32,61 @@ const TodoList = () => {
   const { open, setOpen, setIsEdit, setTodoId, selectedPetId } = useContext(TodoDialogContext);
 
   const { subscribeToMore, loading, data } = useQuery(GET_CHANNEL_TODOS, {
-    variables: { id: currentChannel.id },
+    variables: { id: currentChannel.id, token: localStorage.getItem("token") },
+  });
+
+  useEffect(() => {
+    // props.subscribeToNewComments();
+    subscribeToMore({
+      document: TODO_SUBSCRIPTION,
+      variables: { id: currentChannel.id },
+      updateQuery: (prev, { subscriptionData }) => {
+        console.log(subscriptionData.data, prev);
+        if (!subscriptionData.data) {
+          return prev;
+        }
+        const newFeedItem = subscriptionData.data.todo.data;
+        if (
+          subscriptionData.data.todo.mutation === "CREATE_TODO" &&
+          !prev.user.channels[0].todos.find(todo => todo.id === newFeedItem.id)
+        ) {
+          const result = {
+            user: {
+              channels: [
+                {
+                  todos: [...prev.user.channels[0].todos, newFeedItem],
+                  __typename: "Channel",
+                },
+              ],
+              __typename: "User",
+            },
+          };
+          // const result = { ...prev, { todos: [...prev.user.channels[0].todos, newFeedItem] }}
+          console.log(result);
+          return result;
+        }
+        if (subscriptionData.data.todo.mutation === "DELETE_TODO") {
+          const result = {
+            user: {
+              channels: [
+                {
+                  todos: prev.user.channels[0].todos.filter(todo => todo.id !== newFeedItem.id),
+                  __typename: "Channel",
+                },
+              ],
+              __typename: "User",
+            },
+          };
+
+          return result;
+        }
+
+        if (subscriptionData.data.todo.mutation === "UPDATE_TODO") {
+          console.log(subscriptionData.data.todo);
+        }
+        return prev;
+      },
+    });
   });
 
   useEffect(() => {
@@ -70,7 +124,7 @@ const TodoList = () => {
       refetchQueries: [
         {
           query: GET_CHANNEL_TODOS,
-          variables: { id: currentChannel.id },
+          variables: { id: currentChannel.id, token: localStorage.getItem("token") },
         },
       ],
     });
@@ -85,7 +139,7 @@ const TodoList = () => {
   return (
     <List className={classes.root}>
       {!loading &&
-        data.channel.todos
+        data.user.channels[0].todos
           .filter(todo => {
             if (selectedPetId !== "showAll") {
               return todo.pets.id === selectedPetId;

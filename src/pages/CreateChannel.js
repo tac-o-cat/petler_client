@@ -38,7 +38,10 @@ const CreateChannel = props => {
     onCompleted(data) {
       setCurrentChannel({ id: data.createChannel.id, name: data.createChannel.name });
       alert("채널이 생성되었습니다!");
-      props.history.push("/createpetprofile");
+      props.history.push({
+        pathname: "/createpetprofile",
+        state: { isEdit: false, prevPath: props.location.pathname },
+      });
     },
   });
 

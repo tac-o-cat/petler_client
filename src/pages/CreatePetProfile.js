@@ -1,5 +1,5 @@
 /* eslint-disable no-alert */
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import { ValidatorForm, TextValidator, SelectValidator } from "react-material-ui-form-validator";
@@ -9,16 +9,21 @@ import { makeStyles } from "@material-ui/core/styles";
 import UploadProfilePic from "components/UploadProfilePic";
 import ImageSelector from "components/ImageSelector";
 import { CirclePicker } from "react-color";
-import { useMutation } from "@apollo/react-hooks";
-import { CREATE_PET_MUTATION, GET_PETS } from "queries/queries";
+import { useMutation, useApolloClient } from "@apollo/react-hooks";
+import {
+  CREATE_PET_MUTATION,
+  GET_PETS,
+  GET_PET_PROFILE,
+  UPDATE_PET_PROFILE,
+} from "queries/queries";
 import { CurrentUserContext } from "components/Authentication";
 
 // todo: 펫 프로필 생성 후 로직. 어느 페이지로 리다이렉트할지?
-const CreatePetProfile = ({ history }) => {
+const CreatePetProfile = ({ location, history }) => {
   const { currentChannel } = useContext(CurrentUserContext);
   const [file, setFile] = useState("");
   /* 펫 정보가 담긴 state 설정 */
-  const [pet, setPet] = useState({
+  const [petInfo, setPetInfo] = useState({
     name: "",
     gender: "",
     age: "",
@@ -30,7 +35,7 @@ const CreatePetProfile = ({ history }) => {
     img: "https://codestates.com/images/logo_sub_b_simple.png",
     cardCover: "",
   });
-  const { name, gender, age, type, typeEtc, typeDetail, intro, todoColor, img } = pet;
+  const { name, gender, age, type, typeEtc, typeDetail, intro, todoColor, img } = petInfo;
 
   const petGender = [
     { value: "", label: "" },
@@ -54,47 +59,103 @@ const CreatePetProfile = ({ history }) => {
   ];
   const palette = ["#2196f3", "#9c27b0", "#009688", "#ffc107", "#ff9800"];
 
+  const client = useApolloClient();
+  useEffect(() => {
+    const fetchData = async () => {
+      const {
+        data: { pet },
+      } = await client.query({
+        query: GET_PET_PROFILE,
+        variables: { id: location.state.petId },
+      });
+
+      setPetInfo({
+        name: pet.name,
+        gender: pet.gender,
+        age: pet.age,
+        type: pet.type,
+        typeDetail: pet.type_detail,
+        typeEtc: "",
+        intro: pet.intro,
+        todoColor: pet.todo_color,
+        img: pet.img,
+        cardCover: pet.card_cover,
+      });
+    };
+    if (location.state.petId) {
+      fetchData();
+    }
+  }, []);
+
   /* input에 onChange 핸들러 적용 - input 값이 바뀔 때마다 state 값 바뀜 */
   const handleChange = e => {
-    setPet({ ...pet, [e.target.name]: e.target.value });
+    setPetInfo({ ...petInfo, [e.target.name]: e.target.value });
   };
   const handleColorChange = color => {
-    setPet({ ...pet, todoColor: color.hex });
+    setPetInfo({ ...petInfo, todoColor: color.hex });
   };
   const handlefileChange = event => {
-    setPet({ ...pet, cardCover: event.target.files[0] });
+    setPetInfo({ ...petInfo, cardCover: event.target.files[0] });
     const reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]);
   };
 
   const [createPetMutation] = useMutation(CREATE_PET_MUTATION, {
-    onCompleted(data) {
-      if (data) {
+    onCompleted() {
+      if (location.state.prevPath === "/petsettings") {
+        history.push("/petsettings");
+      } else {
         history.push("/main");
       }
     },
   });
+  const [updatePetMutation] = useMutation(UPDATE_PET_PROFILE, {
+    onCompleted(data) {
+      if (data) {
+        history.push("/petsettings");
+      }
+    },
+  });
   /* submit 버튼 이벤트 핸들러 - 클릭 시 mutation 보냄 */
+
   const handleSubmit = async e => {
     e.preventDefault();
-    const copiedPet = { ...pet };
+    const copiedPet = { ...petInfo };
     if (file) {
       copiedPet.img = await UploadProfilePic(file);
     }
-    createPetMutation({
-      variables: {
-        ...copiedPet,
-        token: localStorage.getItem("token"),
-        channelId: currentChannel.id,
-      },
-      refetchQueries: [
-        {
-          query: GET_PETS,
-          variables: { id: currentChannel.id },
+    if (location.state.isEdit) {
+      updatePetMutation({
+        variables: {
+          ...copiedPet,
+          petId: location.state.petId,
+          token: localStorage.getItem("token"),
+          channelId: currentChannel.id,
         },
-      ],
-      awaitRefetchQueries: true,
-    });
+        refetchQueries: [
+          {
+            query: GET_PETS,
+            variables: { id: currentChannel.id },
+          },
+        ],
+        awaitRefetchQueries: true,
+      });
+    } else {
+      createPetMutation({
+        variables: {
+          ...copiedPet,
+          token: localStorage.getItem("token"),
+          channelId: currentChannel.id,
+        },
+        refetchQueries: [
+          {
+            query: GET_PETS,
+            variables: { id: currentChannel.id },
+          },
+        ],
+        awaitRefetchQueries: true,
+      });
+    }
   };
 
   /* style 적용 */
@@ -305,7 +366,7 @@ const CreatePetProfile = ({ history }) => {
             </Grid>
             <Grid item xs={12}>
               <Button fullWidth type="submit" variant="contained" color="primary">
-                펫 생성
+                {location.state.isEdit ? "펫 정보 수정" : "펫 프로필 생성"}
               </Button>
             </Grid>
           </Grid>
