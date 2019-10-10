@@ -11,7 +11,7 @@ const ChannelSettingsBtn = () => {
     { name: "채널 관리", path: "/channelsettings" },
     { name: "집사 관리", path: "/membersettings" },
     { name: "채널 생성", path: "/addChannel" },
-    { name: "펫 추가", path: "/createpetprofile" },
+    { name: "펫 관리", path: "/petsettings" },
   ];
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);

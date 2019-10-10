@@ -273,10 +273,71 @@ const GET_PETS = gql`
   query($id: ID!) {
     channel(id: $id) {
       pets {
-        name
         id
+        img
+        type
+        type_detail
+        name
+        gender
+        age
+        intro
+        todo_color
       }
     }
+  }
+`;
+const GET_PET_PROFILE = gql`
+  query($id: ID!) {
+    pet(id: $id) {
+      name
+      gender
+      age
+      type
+      type_detail
+      intro
+      img
+      todo_color
+      card_cover
+    }
+  }
+`;
+const UPDATE_PET_PROFILE = gql`
+  mutation(
+    $petId: ID
+    $token: String!
+    $name: String!
+    $gender: String
+    $age: String
+    $type: String
+    $typeDetail: String
+    $intro: String
+    $img: String!
+    $todoColor: String!
+    $cardCover: String
+    $channelId: ID!
+  ) {
+    updatePet(
+      updatePet: {
+        petId: $petId
+        token: $token
+        name: $name
+        gender: $gender
+        age: $age
+        type: $type
+        typeDetail: $typeDetail
+        intro: $intro
+        img: $img
+        todoColor: $todoColor
+        cardCover: $cardCover
+        channelId: $channelId
+      }
+    )
+  }
+`;
+
+const DELETE_PET = gql`
+  mutation($token: String!, $id: ID!) {
+    deletePet(token: $token, id: $id)
   }
 `;
 
@@ -303,4 +364,7 @@ export {
   DELETE_TODO,
   IS_DONE_TODO,
   GET_PETS,
+  GET_PET_PROFILE,
+  UPDATE_PET_PROFILE,
+  DELETE_PET,
 };
