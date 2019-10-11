@@ -5,8 +5,6 @@ import { useApolloClient, useQuery } from "@apollo/react-hooks";
 import Checkbox from "@material-ui/core/Checkbox";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Avatar from "@material-ui/core/Avatar";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
@@ -19,8 +17,16 @@ import { GET_CHANNEL_TODOS, IS_DONE_TODO, TODO_SUBSCRIPTION } from "queries/quer
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
-    maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
+  },
+  emptyTodos: {
+    paddingTop: "7rem",
+    textAlign: "center",
+    fontSize: "2rem",
+    fontWeight: 200,
+  },
+  emptyImg: {
+    maxWidth: 82,
   },
 }));
 
@@ -134,9 +140,6 @@ const TodoList = () => {
               <ListItemIcon>
                 <Checkbox checked={todo.is_done} onChange={() => handleChangeIsDone(todo.id)} />
               </ListItemIcon>
-              <ListItemAvatar>
-                <Avatar src={todo.img} sizes="small" />
-              </ListItemAvatar>
               <ListItemText primary={todo.todo} />
               <ListItemSecondaryAction>
                 <IconButton edge="end" aria-label="create" onClick={() => openDialog(todo.id)}>
@@ -145,6 +148,17 @@ const TodoList = () => {
               </ListItemSecondaryAction>
             </ListItem>
           ))}
+      {!loading && !data.user.channels[0].todos.length && (
+        <div className={classes.emptyTodos}>
+          <img
+            src="https://practice-aws-adh.s3.ap-northeast-2.amazonaws.com/assets/empty_todos.png"
+            alt=""
+            className={classes.emptyImg}
+          />
+          <br />
+          등록된 <br /> 할일이 없습니다.
+        </div>
+      )}
     </List>
   );
 };

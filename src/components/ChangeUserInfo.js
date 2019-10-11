@@ -37,13 +37,13 @@ const ChangeUserInfo = ({ history }) => {
       {
         query: GET_USER_BY_TOKEN,
         variables: { token: localStorage.getItem("token") },
-        onCompleted({ updateUserInfo }) {
-          if (updateUserInfo) {
-            alert("회원정보 수정이 완료되었습니다.");
-          }
-        },
       },
     ],
+    onCompleted({ updateUserInfo }) {
+      if (updateUserInfo) {
+        alert("회원정보 수정이 완료되었습니다.");
+      }
+    },
   });
 
   const handleEdit = async e => {

@@ -107,7 +107,7 @@ const SignUp = ({ history }) => {
         <ValidatorForm ref={() => "form"} onSubmit={handleSubmit} debounceTime={1000}>
           <Grid container spacing={2}>
             <Grid item className={classes.profilePicGrid} xs={12}>
-              <ImageSelector onImageReady={setFile} />
+              <ImageSelector type="user" onImageReady={setFile} />
             </Grid>
             <Grid item xs={12}>
               <TextValidator
@@ -180,11 +180,6 @@ const SignUp = ({ history }) => {
               />
             </Grid>
             <Grid item xs={6}>
-              <Button fullWidth type="submit" variant="contained" color="primary">
-                회원 가입
-              </Button>
-            </Grid>
-            <Grid item xs={6}>
               <Button
                 fullWidth
                 variant="contained"
@@ -192,6 +187,11 @@ const SignUp = ({ history }) => {
                 onClick={() => history.push("/")}
               >
                 뒤로 가기
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button fullWidth type="submit" variant="contained" color="primary">
+                회원 가입
               </Button>
             </Grid>
           </Grid>

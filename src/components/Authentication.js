@@ -6,9 +6,7 @@ import { GET_USER_BY_TOKEN } from "queries/queries";
 export const CurrentUserContext = createContext();
 
 const AuthenticationProvider = ({ history, children }) => {
-  const [currentUser, setCurrentUser] = useState({
-    name: "",
-  });
+  const [currentUser, setCurrentUser] = useState({});
   const [currentChannel, setCurrentChannel] = useState({
     id: "",
     name: "",
@@ -17,9 +15,10 @@ const AuthenticationProvider = ({ history, children }) => {
   const { error, loading } = useQuery(GET_USER_BY_TOKEN, {
     variables: { token: localStorage.getItem("token") },
     onCompleted(data) {
-      setCurrentUser(data.getUserByToken.name);
+      setCurrentUser(data.getUserByToken);
     },
   });
+
   if (error) {
     localStorage.removeItem("token");
     history.push("/");
