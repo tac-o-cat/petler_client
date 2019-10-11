@@ -18,6 +18,7 @@ const AuthenticationProvider = ({ history, children }) => {
       setCurrentUser(data.getUserByToken);
     },
   });
+
   if (error) {
     localStorage.removeItem("token");
     history.push("/");

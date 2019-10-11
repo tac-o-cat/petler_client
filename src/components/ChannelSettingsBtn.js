@@ -8,10 +8,11 @@ import { Link as RouterLink } from "react-router-dom";
 const ChannelSettingsBtn = () => {
   const ITEM_HEIGHT = 48;
   const options = [
-    { name: "채널 관리", path: "/channelsettings" },
+    { name: "내 정보", path: "/mypage" },
     { name: "집사 관리", path: "/membersettings" },
+    { name: "반려동물 관리", path: "/petsettings" },
+    { name: "채널 관리", path: "/channelsettings" },
     { name: "채널 생성", path: "/addChannel" },
-    { name: "펫 관리", path: "/petsettings" },
   ];
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -28,18 +29,7 @@ const ChannelSettingsBtn = () => {
       <IconButton onClick={handleClick}>
         <SettingsIcon />
       </IconButton>
-      <Menu
-        anchorEl={anchorEl}
-        keepMounted
-        open={open}
-        onClose={handleClose}
-        PaperProps={{
-          style: {
-            maxHeight: ITEM_HEIGHT * 4.5,
-            width: 100,
-          },
-        }}
-      >
+      <Menu anchorEl={anchorEl} keepMounted open={open} onClose={handleClose}>
         {options.map(option => (
           <MenuItem to={option.path} component={RouterLink} key={option.name} onClick={handleClose}>
             {option.name}
