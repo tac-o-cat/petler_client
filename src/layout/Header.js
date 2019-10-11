@@ -5,7 +5,9 @@ import { withStyles, withTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
+import HomeIcon from "@material-ui/icons/Home";
 import { LayoutContext } from "./Root";
+import { Link as RouterLink } from "react-router-dom";
 
 const styles = ({ transitions }) => ({
   root: {
@@ -84,11 +86,9 @@ const Header = ({
       }}
     >
       <Toolbar {...toolbarProps}>
-        {shouldRenderMenu && (
-          <IconButton onClick={setOpen} className={classes.menuButton}>
-            {open ? menuIcon.active : menuIcon.inactive || menuIcon.active}
-          </IconButton>
-        )}
+        <IconButton to="/main" component={RouterLink}>
+          <HomeIcon />
+        </IconButton>
         {typeof children === "function" ? children(ctx) : children}
       </Toolbar>
     </AppBar>
@@ -105,7 +105,6 @@ Header.propTypes = {
   children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]).isRequired,
   toolbarProps: PropTypes.shape({}),
   menuIcon: PropTypes.shape({
-    inactive: PropTypes.node.isRequired,
     active: PropTypes.node,
   }),
 };

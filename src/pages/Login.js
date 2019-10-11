@@ -82,7 +82,7 @@ const Login = ({ history }) => {
       <div>
         <Typography className={classes.logo} component="h1" variant="h5">
           <img
-            src="https://practice-aws-adh.s3.ap-northeast-2.amazonaws.com/photos/2315084377_f349e07b-47a6-4f4b-a5f5-cc1e3aa2553c.png"
+            src="https://practice-aws-adh.s3.ap-northeast-2.amazonaws.com/photos/petler_logo.png"
             alt="나는 집사다"
           />
         </Typography>
