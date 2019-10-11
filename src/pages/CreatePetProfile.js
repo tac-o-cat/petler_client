@@ -32,7 +32,7 @@ const CreatePetProfile = ({ location, history }) => {
     typeDetail: "",
     intro: "",
     todoColor: "#2196f3",
-    img: "https://codestates.com/images/logo_sub_b_simple.png",
+    img: "",
     cardCover: "",
   });
   const { name, gender, age, type, typeEtc, typeDetail, intro, todoColor, img } = petInfo;
@@ -201,7 +201,7 @@ const CreatePetProfile = ({ location, history }) => {
         <ValidatorForm ref={() => "form"} onSubmit={handleSubmit} debounceTime={1000}>
           <Grid container spacing={2}>
             <Grid item className={classes.profilePicGrid} xs={12}>
-              <ImageSelector onImageReady={setFile} prevImg={img} />
+              <ImageSelector type="pet" onImageReady={setFile} prevImg={img} />
             </Grid>
             <Grid item xs={8}>
               <TextValidator

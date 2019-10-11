@@ -40,9 +40,9 @@ const PetSettings = ({ location }) => {
                 {pet.name}
               </Typography>
               <Typography variant="body2" component="p">
-                {`${pet.type} / ${pet.type_detail.length ? `${pet.type_detail} /` : ""} ${
-                  pet.gender
-                } / ${pet.age}`}
+                {`${pet.type} / ${pet.type_detail ? `${pet.type_detail} /` : ""} ${pet.gender} / ${
+                  pet.age
+                }`}
                 <br />
                 {pet.intro}
               </Typography>
