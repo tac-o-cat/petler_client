@@ -81,7 +81,10 @@ const Login = ({ history }) => {
     <Container className={classes.loginContainer} maxWidth="xs">
       <div>
         <Typography className={classes.logo} component="h1" variant="h5">
-          나는 집사다
+          <img
+            src="https://practice-aws-adh.s3.ap-northeast-2.amazonaws.com/photos/2315084377_f349e07b-47a6-4f4b-a5f5-cc1e3aa2553c.png"
+            alt="나는 집사다"
+          />
         </Typography>
         <ValidatorForm ref={() => "form"} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
@@ -120,17 +123,6 @@ const Login = ({ history }) => {
               />
             </Grid>
             <Grid item xs={12}>
-              <Link
-                href="/"
-                component={React.forwardRef((prop, ref) => (
-                  <RouterLink innerRef={ref} to="/findpassword" {...prop} />
-                ))}
-                variant="body2"
-              >
-                비밀번호를 잊으셨나요?
-              </Link>
-            </Grid>
-            <Grid item xs={12}>
               <Button type="submit" fullWidth variant="contained" color="primary">
                 로그인
               </Button>
@@ -145,45 +137,6 @@ const Login = ({ history }) => {
               >
                 회원가입
               </Button>
-            </Grid>
-            <Grid item xs={6}>
-              <GoogleLogin
-                render={renderProps => (
-                  <Button
-                    fullWidth
-                    onClick={renderProps.onClick}
-                    variant="contained"
-                    color="inherit"
-                  >
-                    Login With Google
-                  </Button>
-                )}
-                clientId={config.GOOGLE_LOGIN_CLIENT_ID}
-                onSuccess={responseSuccess}
-                onFailure={responseFail}
-                cookiePolicy="single_host_origin"
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <KakaoLogin
-                render={prop => (
-                  <Button
-                    fullWidth
-                    onClick={() => {
-                      // eslint-disable-next-line react/prop-types
-                      prop.onClick();
-                    }}
-                    variant="contained"
-                    color="inherit"
-                  >
-                    Login With Kakao
-                  </Button>
-                )}
-                jsKey={config.KAKAO_LOGIN_JS_KEY}
-                onSuccess={responseSuccess}
-                onFailure={responseFail}
-                getProfile
-              />
             </Grid>
           </Grid>
         </ValidatorForm>
