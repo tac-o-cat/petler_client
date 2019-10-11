@@ -5,8 +5,6 @@ import { useApolloClient, useQuery } from "@apollo/react-hooks";
 import Checkbox from "@material-ui/core/Checkbox";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import Avatar from "@material-ui/core/Avatar";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
@@ -133,9 +131,6 @@ const TodoList = () => {
               <ListItemIcon>
                 <Checkbox checked={todo.is_done} onChange={() => handleChangeIsDone(todo.id)} />
               </ListItemIcon>
-              <ListItemAvatar>
-                <Avatar src={todo.img} sizes="small" />
-              </ListItemAvatar>
               <ListItemText primary={todo.todo} />
               <ListItemSecondaryAction>
                 <IconButton edge="end" aria-label="create" onClick={() => openDialog(todo.id)}>
