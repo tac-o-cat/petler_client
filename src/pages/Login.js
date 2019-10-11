@@ -1,14 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { GoogleLogin } from "react-google-login";
-import KakaoLogin from "react-kakao-login";
-import config from "config";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
-import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { LOGIN_QUERY } from "queries/queries";
