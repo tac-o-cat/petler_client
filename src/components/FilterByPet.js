@@ -17,7 +17,9 @@ const FilterByPet = () => {
     setSelectedPetId(event.target.value);
   };
 
-  const { loading, data } = useQuery(GET_PETS, { variables: { id: currentChannel.id } });
+  const { loading, data } = useQuery(GET_PETS, {
+    variables: { token: localStorage.getItem("token"), id: currentChannel.id },
+  });
 
   return (
     <FormControl>
@@ -34,7 +36,7 @@ const FilterByPet = () => {
           전체보기
         </MenuItem>
         {!loading &&
-          data.channel.pets.map(pet => (
+          data.user.channels[0].pets.map(pet => (
             <MenuItem key={pet.name} value={pet.id}>
               {pet.name}
             </MenuItem>

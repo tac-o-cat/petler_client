@@ -17,19 +17,22 @@ import { Link as RouterLink } from "react-router-dom";
 const PetSettings = ({ location }) => {
   const { currentChannel } = useContext(CurrentUserContext);
 
-  const { loading, data } = useQuery(GET_PETS, { variables: { id: currentChannel.id } });
+  const { loading, data } = useQuery(GET_PETS, {
+    variables: { id: currentChannel.id, token: localStorage.getItem("token") },
+  });
   const [deletePet] = useMutation(DELETE_PET, {
     refetchQueries: [
       {
         query: GET_PETS,
-        variables: { id: currentChannel.id },
+        variables: { id: currentChannel.id, token: localStorage.getItem("token") },
       },
     ],
   });
+
   return (
     <div>
       {!loading &&
-        data.channel.pets.map(pet => (
+        data.user.channels[0].pets.map(pet => (
           <Card key={`${pet.id}card`} style={{ backgroundColor: pet.todo_color }}>
             <CardContent>
               <Typography variant="h5" component="h3">

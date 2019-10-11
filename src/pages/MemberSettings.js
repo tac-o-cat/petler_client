@@ -23,14 +23,18 @@ const MemberSettings = () => {
   const { id } = currentChannel;
   const [inviteEmail, setInviteEmail] = useState("");
 
-  const { data, error, loading } = useQuery(CHANNEL_MEMBERS, { variables: { id } });
+  const { data, error, loading } = useQuery(CHANNEL_MEMBERS, {
+    variables: { id, token: localStorage.getItem("token") },
+  });
   const [dismissMember] = useMutation(DISMISS_MEMBER);
   const [addUserToChannel] = useMutation(ADD_USER_TO_CHANNEL);
 
   const handleDelete = userId => {
     dismissMember({
       variables: { token: localStorage.getItem("token"), dismissId: userId, channelId: id },
-      refetchQueries: [{ query: CHANNEL_MEMBERS, variables: { id } }],
+      refetchQueries: [
+        { query: CHANNEL_MEMBERS, variables: { id, token: localStorage.getItem("token") } },
+      ],
       awaitRefetchQueries: true,
     });
   };
@@ -45,7 +49,9 @@ const MemberSettings = () => {
         email: inviteEmail,
         channelId: currentChannel.id,
       },
-      refetchQueries: [{ query: CHANNEL_MEMBERS, variables: { id } }],
+      refetchQueries: [
+        { query: CHANNEL_MEMBERS, variables: { id, token: localStorage.getItem("token") } },
+      ],
       awaitRefetchQueries: true,
     });
     if (error) {
@@ -69,9 +75,9 @@ const MemberSettings = () => {
       // eslint-disable-next-line no-shadow
       const { data } = await client.query({
         query: CHECK_UNIQUE_MEMBER,
-        variables: { id, email: value },
+        variables: { token: localStorage.getItem("token"), id, email: value },
       });
-      if (data.channel.checkUser) {
+      if (data.user.channels[0].checkUser) {
         return false;
       }
       return true;
@@ -110,7 +116,7 @@ const MemberSettings = () => {
         <ValidatorForm ref={() => "form"} onSubmit={handleSubmit} debounceTime={1000}>
           <Grid container spacing={2}>
             {!loading &&
-              data.channel.users
+              data.user.channels[0].users
                 .filter(petler => petler.name !== currentUser)
                 .map(petler => (
                   <Fragment key={`${petler.id}container`}>

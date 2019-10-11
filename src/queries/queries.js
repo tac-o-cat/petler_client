@@ -117,16 +117,15 @@ const ADD_USER_TO_CHANNEL = gql`
 `;
 
 const CHANNEL_MEMBERS = gql`
-  query($id: ID!, $userId: ID) {
-    channel(id: $id) {
-      name
-      img
-      id
-      users(id: $userId) {
-        name
-        img
-        id
-        email
+  query($token: String!, $id: ID!) {
+    user(token: $token) {
+      channels(id: $id) {
+        users {
+          name
+          img
+          id
+          email
+        }
       }
     }
   }
@@ -139,24 +138,28 @@ const DISMISS_MEMBER = gql`
 `;
 
 const CHECK_UNIQUE_MEMBER = gql`
-  query($id: ID!, $email: String!) {
-    channel(id: $id) {
-      id
-      checkUser(email: $email)
+  query($token: String!, $id: ID!, $email: String!) {
+    user(token: $token) {
+      channels(id: $id) {
+        id
+        checkUser(email: $email)
+      }
     }
   }
 `;
 
 const GET_CHANNEL_TODOS = gql`
-  query($id: ID!) {
-    channel(id: $id) {
-      todos {
-        id
-        todo
-        is_done
-        pets {
-          name
+  query($token: String!, $id: ID!) {
+    user(token: $token) {
+      channels(id: $id) {
+        todos {
           id
+          todo
+          is_done
+          pets {
+            name
+            id
+          }
         }
       }
     }
@@ -164,15 +167,18 @@ const GET_CHANNEL_TODOS = gql`
 `;
 
 const GET_CHANNEL_INFO = gql`
-  query($id: ID!) {
-    channel(id: $id) {
-      users {
-        id
-        name
-      }
-      pets {
-        id
-        name
+  query($token: String!, $id: ID!) {
+    user(token: $token) {
+      channels(id: $id) {
+        users {
+          id
+          name
+          user_channel_id
+        }
+        pets {
+          id
+          name
+        }
       }
     }
   }
@@ -181,30 +187,31 @@ const GET_CHANNEL_INFO = gql`
 const CREATE_TODO = gql`
   mutation(
     $token: String!
-    $todoId: ID
+    $todo_id: ID
     $todo: String!
     $memo: String
     $push_date: Date
     $end_date: Date
     $repeat_day: String
-    $petId: ID!
-    $channelId: ID
-    $assignedId: ID!
+    $pet_id: ID!
+    $channel_id: ID
+    $assigned_id: ID!
   ) {
     createTodo(
       todoInfo: {
         token: $token
-        todoId: $todoId
+        todo_id: $todo_id
         todo: $todo
         memo: $memo
         push_date: $push_date
         end_date: $end_date
         repeat_day: $repeat_day
-        petId: $petId
-        channelId: $channelId
-        assignedId: $assignedId
+        pet_id: $pet_id
+        channel_id: $channel_id
+        assigned_id: $assigned_id
       }
     ) {
+      id
       todo
     }
   }
@@ -213,46 +220,50 @@ const CREATE_TODO = gql`
 const UPDATE_TODO = gql`
   mutation(
     $token: String!
-    $todoId: ID
+    $todo_id: ID
     $todo: String!
     $memo: String
     $push_date: Date
     $end_date: Date
     $repeat_day: String
-    $petId: ID!
-    $channelId: ID
-    $assignedId: ID!
+    $pet_id: ID!
+    $channel_id: ID
+    $assigned_id: ID!
   ) {
     updateTodo(
       updateTodoInfo: {
         token: $token
-        todoId: $todoId
+        todo_id: $todo_id
         todo: $todo
         memo: $memo
         push_date: $push_date
         end_date: $end_date
         repeat_day: $repeat_day
-        petId: $petId
-        channelId: $channelId
-        assignedId: $assignedId
+        pet_id: $pet_id
+        channel_id: $channel_id
+        assigned_id: $assigned_id
       }
     )
   }
 `;
 
 const GET_TODO = gql`
-  query($id: ID!) {
-    todo(id: $id) {
-      id
-      todo
-      memo
-      push_date
-      end_date
-      repeat_day
-      is_done
-      pets {
-        id
-        name
+  query($token: String!, $id: ID!, $todo_id: ID!) {
+    user(token: $token) {
+      channels(id: $id) {
+        todos(id: $todo_id) {
+          id
+          todo
+          memo
+          push_date
+          end_date
+          repeat_day
+          is_done
+          pets {
+            id
+          }
+          assigned_id
+        }
       }
     }
   }
@@ -270,18 +281,21 @@ const IS_DONE_TODO = gql`
   }
 `;
 const GET_PETS = gql`
-  query($id: ID!) {
-    channel(id: $id) {
-      pets {
-        id
-        img
-        type
-        type_detail
-        name
-        gender
-        age
-        intro
-        todo_color
+  query($token: String!, $id: ID!) {
+    user(token: $token) {
+      channels(id: $id) {
+        pets {
+          id
+          name
+          gender
+          age
+          type
+          type_detail
+          intro
+          img
+          todo_color
+          card_cover
+        }
       }
     }
   }
@@ -341,6 +355,23 @@ const DELETE_PET = gql`
   }
 `;
 
+const TODO_SUBSCRIPTION = gql`
+  subscription($id: ID!) {
+    todo(channel_id: $id) {
+      mutation
+      data {
+        id
+        todo
+        is_done
+        pets {
+          name
+          id
+        }
+      }
+    }
+  }
+`;
+
 export {
   LOGIN_QUERY,
   CHECK_UNIQUE_EMAIL,
@@ -367,4 +398,5 @@ export {
   GET_PET_PROFILE,
   UPDATE_PET_PROFILE,
   DELETE_PET,
+  TODO_SUBSCRIPTION,
 };

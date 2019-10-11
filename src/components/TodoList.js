@@ -1,5 +1,5 @@
 /* eslint-disable no-alert */
-import React, { useState, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { useApolloClient, useQuery } from "@apollo/react-hooks";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -14,7 +14,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CreateIcon from "@material-ui/icons/Create";
 import { CurrentUserContext } from "components/Authentication";
 import { TodoDialogContext } from "pages/Main";
-import { GET_CHANNEL_TODOS, IS_DONE_TODO } from "queries/queries";
+import { GET_CHANNEL_TODOS, IS_DONE_TODO, TODO_SUBSCRIPTION } from "queries/queries";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,18 +24,81 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const TodoList = props => {
+const TodoList = () => {
   const classes = useStyles();
   const client = useApolloClient();
-  const { currentChannel } = useContext(CurrentUserContext);
-  const { open, setOpen, setIsEdit, setTodoId, selectedPetId } = useContext(TodoDialogContext);
 
-  const { loading, data } = useQuery(GET_CHANNEL_TODOS, {
-    variables: { id: currentChannel.id },
+  const { currentChannel } = useContext(CurrentUserContext);
+  const { setOpen, setIsEdit, setTodoId, selectedPetId } = useContext(TodoDialogContext);
+
+  const { subscribeToMore, loading, data } = useQuery(GET_CHANNEL_TODOS, {
+    variables: { id: currentChannel.id, token: localStorage.getItem("token") },
+  });
+
+  useEffect(() => {
+    // props.subscribeToNewComments();
+    subscribeToMore({
+      document: TODO_SUBSCRIPTION,
+      variables: { id: currentChannel.id },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) {
+          return prev;
+        }
+        const newFeedItem = subscriptionData.data.todo.data;
+        if (
+          subscriptionData.data.todo.mutation === "CREATE_TODO" &&
+          !prev.user.channels[0].todos.find(todo => todo.id === newFeedItem.id)
+        ) {
+          return {
+            user: {
+              channels: [
+                {
+                  todos: prev.user.channels[0].todos.concat(newFeedItem),
+                  __typename: "Channel",
+                },
+              ],
+              __typename: "User",
+            },
+          };
+        }
+        if (subscriptionData.data.todo.mutation === "DELETE_TODO") {
+          return {
+            user: {
+              channels: [
+                {
+                  todos: prev.user.channels[0].todos.filter(todo => todo.id !== newFeedItem.id),
+                  __typename: "Channel",
+                },
+              ],
+              __typename: "User",
+            },
+          };
+        }
+        if (
+          subscriptionData.data.todo.mutation === "UPDATE_TODO" ||
+          subscriptionData.data.todo.mutation === "IS_DONE_TODO"
+        ) {
+          return {
+            user: {
+              channels: [
+                {
+                  todos: prev.user.channels[0].todos.map(todo => {
+                    return todo.id === subscriptionData.data.todo ? subscriptionData.data : todo;
+                  }),
+                  __typename: "Channel",
+                },
+              ],
+              __typename: "User",
+            },
+          };
+        }
+        return prev;
+      },
+    });
   });
 
   const handleChangeIsDone = async id => {
-    const { data } = await client.mutate({
+    await client.mutate({
       mutation: IS_DONE_TODO,
       variables: {
         id,
@@ -44,7 +107,7 @@ const TodoList = props => {
       refetchQueries: [
         {
           query: GET_CHANNEL_TODOS,
-          variables: { id: currentChannel.id },
+          variables: { id: currentChannel.id, token: localStorage.getItem("token") },
         },
       ],
     });
@@ -59,7 +122,7 @@ const TodoList = props => {
   return (
     <List className={classes.root}>
       {!loading &&
-        data.channel.todos
+        data.user.channels[0].todos
           .filter(todo => {
             if (selectedPetId !== "showAll") {
               return todo.pets.id === selectedPetId;

@@ -33,18 +33,18 @@ const INITIAL_STATE = {
   push_date: null,
   end_date: null,
   repeat_day: "",
-  petId: "",
-  assignedId: "",
+  pet_id: "",
+  assigned_id: "",
   pets: [],
 };
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     padding: "0 24px 24px",
   },
 }));
 
-function TodoDialog(props) {
+const TodoDialog = () => {
   const client = useApolloClient();
   const classes = useStyles();
 
@@ -106,22 +106,27 @@ function TodoDialog(props) {
 
   const handleSubmit = async e => {
     e.preventDefault();
+
     if (isEdit) {
       updateTodo({
         variables: {
           ...newTodo,
-          channelId: currentChannel.id,
-          todoId,
+          channel_id: currentChannel.id,
+          todo_id: newTodo.id,
           token: localStorage.getItem("token"),
         },
         refetchQueries: [
           {
             query: GET_CHANNEL_TODOS,
-            variables: { id: currentChannel.id },
+            variables: { token: localStorage.getItem("token"), id: currentChannel.id },
           },
           {
             query: GET_TODO,
-            variables: { id: todoId },
+            variables: {
+              todo_id: todoId,
+              id: currentChannel.id,
+              token: localStorage.getItem("token"),
+            },
           },
         ],
         awaitRefetchQueries: true,
@@ -130,14 +135,13 @@ function TodoDialog(props) {
       createTodo({
         variables: {
           ...newTodo,
-          channelId: currentChannel.id,
-          todoId,
+          channel_id: currentChannel.id,
           token: localStorage.getItem("token"),
         },
         refetchQueries: [
           {
             query: GET_CHANNEL_TODOS,
-            variables: { id: currentChannel.id },
+            variables: { token: localStorage.getItem("token"), id: currentChannel.id },
           },
         ],
         awaitRefetchQueries: true,
@@ -154,7 +158,7 @@ function TodoDialog(props) {
       refetchQueries: [
         {
           query: GET_CHANNEL_TODOS,
-          variables: { id: currentChannel.id },
+          variables: { id: currentChannel.id, token: localStorage.getItem("token") },
         },
       ],
       awaitRefetchQueries: true,
@@ -165,10 +169,10 @@ function TodoDialog(props) {
     const fetchData = async () => {
       const { data } = await client.query({
         query: GET_CHANNEL_INFO,
-        variables: { id: currentChannel.id },
+        variables: { id: currentChannel.id, token: localStorage.getItem("token") },
       });
-      setPets(data.channel.pets);
-      setUsers(data.channel.users);
+      setPets(data.user.channels[0].pets);
+      setUsers(data.user.channels[0].users);
     };
     if (currentChannel.id) {
       fetchData();
@@ -187,11 +191,14 @@ function TodoDialog(props) {
     const fetchData = async () => {
       const { data } = await client.query({
         query: GET_TODO,
-        variables: { id: todoId },
+        variables: { todo_id: todoId, id: currentChannel.id, token: localStorage.getItem("token") },
       });
-      setNewTodo({ ...data.todo, petId: data.todo.pets.id });
+      setNewTodo({
+        ...data.user.channels[0].todos[0],
+        pet_id: data.user.channels[0].todos[0].pets.id,
+      });
 
-      if (data.todo.repeat_day) {
+      if (data.user.channels[0].todos[0].repeat_day) {
         setIsRepeat(true);
       }
     };
@@ -240,7 +247,7 @@ function TodoDialog(props) {
           <Grid item xs={12}>
             <SelectValidator
               label="반려동물"
-              name="petId"
+              name="pet_id"
               validators={["required"]}
               errorMessages={["반려동물을 선택해 주세요"]}
               fullWidth
@@ -251,7 +258,7 @@ function TodoDialog(props) {
               InputLabelProps={{
                 shrink: true,
               }}
-              value={newTodo.petId}
+              value={newTodo.pet_id}
             >
               {pets.map(pet => (
                 <MenuItem key={pet.id} value={pet.id}>
@@ -264,7 +271,7 @@ function TodoDialog(props) {
           <Grid item xs={12}>
             <SelectValidator
               label="담당집사"
-              name="assignedId"
+              name="assigned_id"
               validators={["required"]}
               errorMessages={["담당집사를 선택해 주세요"]}
               fullWidth
@@ -272,10 +279,10 @@ function TodoDialog(props) {
               variant="outlined"
               margin="dense"
               onChange={handleChange}
-              value={newTodo.assignedId}
+              value={newTodo.assigned_id}
             >
               {users.map(user => (
-                <MenuItem key={user.id} value={user.id}>
+                <MenuItem key={user.id} value={user.user_channel_id}>
                   {user.name}
                 </MenuItem>
               ))}
@@ -353,6 +360,6 @@ function TodoDialog(props) {
       </ValidatorForm>
     </Dialog>
   );
-}
+};
 
 export default TodoDialog;
