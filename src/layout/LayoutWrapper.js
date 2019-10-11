@@ -1,11 +1,8 @@
 import React from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import MenuIcon from "@material-ui/icons/Menu";
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import { Root, Header, Nav, Content, Footer } from "layout";
+import { Root, Header, Content } from "layout";
 import SelectChannel from "components/SelectChannel";
 import ChannelSettingsBtn from "components/ChannelSettingsBtn";
-import NavBar from "components/NavBar";
 
 const config = {
   collapsible: {

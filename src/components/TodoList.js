@@ -19,6 +19,15 @@ const useStyles = makeStyles(theme => ({
     width: "100%",
     backgroundColor: theme.palette.background.paper,
   },
+  emptyTodos: {
+    paddingTop: "7rem",
+    textAlign: "center",
+    fontSize: "2rem",
+    fontWeight: 200,
+  },
+  emptyImg: {
+    maxWidth: 82,
+  },
 }));
 
 const TodoList = () => {
@@ -139,6 +148,17 @@ const TodoList = () => {
               </ListItemSecondaryAction>
             </ListItem>
           ))}
+      {!loading && !data.user.channels[0].todos.length && (
+        <div className={classes.emptyTodos}>
+          <img
+            src="https://practice-aws-adh.s3.ap-northeast-2.amazonaws.com/assets/empty_todos.png"
+            alt=""
+            className={classes.emptyImg}
+          />
+          <br />
+          등록된 <br /> 할일이 없습니다.
+        </div>
+      )}
     </List>
   );
 };

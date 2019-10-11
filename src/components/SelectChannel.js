@@ -17,6 +17,7 @@ const SelectChannel = () => {
   const useStyles = makeStyles(() => ({
     root: {
       width: "100%",
+      textAlign: "center",
     },
   }));
   const classes = useStyles();
