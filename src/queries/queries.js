@@ -34,6 +34,7 @@ const SIGN_UP_MUTATION = gql`
 const GET_USER_BY_TOKEN = gql`
   query($token: String!) {
     getUserByToken(token: $token) {
+      id
       email
       name
       img

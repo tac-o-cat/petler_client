@@ -117,7 +117,7 @@ const MemberSettings = () => {
           <Grid container spacing={2}>
             {!loading &&
               data.user.channels[0].users
-                .filter(petler => petler.name !== currentUser)
+                .filter(petler => petler.id !== currentUser.id)
                 .map(petler => (
                   <Fragment key={`${petler.id}container`}>
                     <Grid item xs={3} key={`${petler.id}ImageGrid`}>
