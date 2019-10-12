@@ -7,7 +7,6 @@ import Typography from "@material-ui/core/Typography";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CreateIcon from "@material-ui/icons/Create";
-import AddIcon from "@material-ui/icons/Add";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Button from "@material-ui/core/Button";
@@ -33,7 +32,7 @@ const PetSettings = ({ location }) => {
     ],
   });
 
-  const useStyles = makeStyles(theme => ({
+  const useStyles = makeStyles(() => ({
     root: {
       padding: 12,
     },
@@ -62,7 +61,7 @@ const PetSettings = ({ location }) => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Button
-            variant="outlined"
+            variant="contained"
             color="primary"
             startIcon={<AddCircleOutlineIcon />}
             to={{
@@ -142,7 +141,9 @@ const PetSettings = ({ location }) => {
             className={classes.emptyImg}
           />
           <br />
-          등록된 <br /> 반려동물이 없습니다.
+          등록된
+          <br />
+          반려동물이 없습니다.
         </div>
       )}
     </div>
