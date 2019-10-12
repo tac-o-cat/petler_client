@@ -6,13 +6,11 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import { Link as RouterLink } from "react-router-dom";
 
 const ChannelSettingsBtn = () => {
-  const ITEM_HEIGHT = 48;
   const options = [
     { name: "내 정보", path: "/mypage" },
     { name: "집사 관리", path: "/membersettings" },
     { name: "반려동물 관리", path: "/petsettings" },
     { name: "채널 관리", path: "/channelsettings" },
-    { name: "채널 생성", path: "/addChannel" },
   ];
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);

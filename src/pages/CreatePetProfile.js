@@ -20,7 +20,7 @@ import { CurrentUserContext } from "components/Authentication";
 
 // todo: 펫 프로필 생성 후 로직. 어느 페이지로 리다이렉트할지?
 const CreatePetProfile = ({ location, history }) => {
-  const { currentChannel } = useContext(CurrentUserContext);
+  const { currentChannel, handleToast } = useContext(CurrentUserContext);
   const [file, setFile] = useState("");
   /* 펫 정보가 담긴 state 설정 */
   const [petInfo, setPetInfo] = useState({
@@ -94,11 +94,6 @@ const CreatePetProfile = ({ location, history }) => {
   const handleColorChange = color => {
     setPetInfo({ ...petInfo, todoColor: color.hex });
   };
-  const handlefileChange = event => {
-    setPetInfo({ ...petInfo, cardCover: event.target.files[0] });
-    const reader = new FileReader();
-    reader.readAsDataURL(event.target.files[0]);
-  };
 
   const [createPetMutation] = useMutation(CREATE_PET_MUTATION, {
     onCompleted() {
@@ -107,12 +102,14 @@ const CreatePetProfile = ({ location, history }) => {
       } else {
         history.push("/main");
       }
+      handleToast("새 펫이 생성되었습니다, 반갑다냥!");
     },
   });
   const [updatePetMutation] = useMutation(UPDATE_PET_PROFILE, {
     onCompleted(data) {
       if (data) {
         history.push("/petsettings");
+        handleToast("펫 정보가 수정되었습니다, 멍멍!");
       }
     },
   });
@@ -349,24 +346,6 @@ const CreatePetProfile = ({ location, history }) => {
             </Grid>
             <Grid item xs={8} className={classes.colorPickerGrid}>
               <CirclePicker color={todoColor} onChange={handleColorChange} colors={palette} />
-            </Grid>
-            <Grid item xs={4}>
-              <div>펫 프로필 배경</div>
-            </Grid>
-            <Grid item xs={8}>
-              <input
-                accept="image/*"
-                style={{ display: "none" }}
-                id="raised-button-file"
-                multiple
-                type="file"
-                onChange={handlefileChange}
-              />
-              <label htmlFor="raised-button-file">
-                <Button fullWidth variant="contained" color="primary" component="span">
-                  업로드
-                </Button>
-              </label>
             </Grid>
             <Grid item xs={12}>
               <Button fullWidth type="submit" variant="contained" color="primary">

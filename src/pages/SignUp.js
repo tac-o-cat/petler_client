@@ -57,7 +57,6 @@ const SignUp = ({ history }) => {
   const [signUpMutation, { error }] = useMutation(SIGN_UP_MUTATION, {
     onCompleted({ signUp }) {
       if (signUp.name) {
-        alert("회원가입이 완료되었습니다.");
         history.push("/");
       }
     },

@@ -19,7 +19,7 @@ import { CurrentUserContext } from "components/Authentication";
 
 const MemberSettings = () => {
   const client = useApolloClient();
-  const { currentChannel, currentUser } = useContext(CurrentUserContext);
+  const { currentChannel, currentUser, handleToast } = useContext(CurrentUserContext);
   const { id } = currentChannel;
   const [inviteEmail, setInviteEmail] = useState("");
 
@@ -55,7 +55,9 @@ const MemberSettings = () => {
       awaitRefetchQueries: true,
     });
     if (error) {
-      alert(error.message);
+      handleToast(error.message);
+    } else {
+      handleToast("집사가 추가되었습니다, 야옹!");
     }
   };
 

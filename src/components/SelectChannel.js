@@ -22,7 +22,7 @@ const SelectChannel = () => {
   }));
   const classes = useStyles();
 
-  const { setCurrentChannel, currentChannel } = useContext(CurrentUserContext);
+  const { setCurrentChannel, currentChannel, handleToast } = useContext(CurrentUserContext);
   const { data, loading } = useQuery(GET_USER_BY_TOKEN, {
     variables: { token: localStorage.getItem("token") },
   });
@@ -34,7 +34,7 @@ const SelectChannel = () => {
         name: data.getUserByToken.channels[0].name,
       });
     }
-  }, [data.getUserByToken.channels]);
+  }, [data.getUserByToken.channels.length]);
 
   const handleClickListItem = event => {
     setAnchorEl(event.currentTarget);
@@ -47,6 +47,7 @@ const SelectChannel = () => {
       name: data.getUserByToken.channels[index].name,
     });
     setAnchorEl(null);
+    handleToast("채널이 변경되었습니다, 멍멍!");
   };
 
   const handleClose = () => {

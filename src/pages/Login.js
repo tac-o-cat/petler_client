@@ -9,32 +9,22 @@ import Grid from "@material-ui/core/Grid";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { LOGIN_QUERY } from "queries/queries";
 import { useLazyQuery } from "@apollo/react-hooks";
+import Toast from "components/Toast";
 
 const Login = ({ history }) => {
   const [user, setUser] = useState({
     email: "",
     password: "",
   });
-
+  const [openToast, setOpenToast] = useState(false);
   const { email, password } = user;
-
-  /* 소셜 로그인 */
-  const responseSuccess = response => {
-    // email, username, profilepic, id토큰을 서버로 전송.
-    // eslint-disable-next-line no-console
-    console.log(response);
-  };
-  const responseFail = error => {
-    // eslint-disable-next-line no-console
-    console.error(error);
-  };
 
   /* 일반 로그인 */
   const handleChange = e => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const [login] = useLazyQuery(LOGIN_QUERY, {
+  const [login, { error }] = useLazyQuery(LOGIN_QUERY, {
     onCompleted(data) {
       if (data) {
         localStorage.setItem("token", data.login.token);
@@ -42,8 +32,8 @@ const Login = ({ history }) => {
         else history.push("/createChannel");
       }
     },
-    onError(error) {
-      alert(error.message);
+    onError() {
+      setOpenToast(true);
     },
   });
 
@@ -137,6 +127,9 @@ const Login = ({ history }) => {
           </Grid>
         </ValidatorForm>
       </div>
+      {error && (
+        <Toast message="이메일과 비밀번호를 확인하세요" open={openToast} openToast={setOpenToast} />
+      )}
     </Container>
   );
 };
