@@ -6,6 +6,9 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 
 const useStyles = makeStyles(theme => ({
+  success: {
+    backgroundColor: "#FFE599",
+  },
   close: {
     padding: theme.spacing(0.5),
   },
@@ -24,6 +27,7 @@ const Toast = props => {
   return (
     <div>
       <Snackbar
+        className={classes.snackbar}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
@@ -36,9 +40,6 @@ const Toast = props => {
         }}
         message={<span id="message-id">{message}</span>}
         action={[
-          <Button key="undo" color="secondary" size="small" onClick={handleClose}>
-            UNDO
-          </Button>,
           <IconButton
             key="close"
             aria-label="close"
