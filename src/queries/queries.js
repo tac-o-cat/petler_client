@@ -179,6 +179,7 @@ const GET_CHANNEL_INFO = gql`
         pets {
           id
           name
+          img
         }
       }
     }

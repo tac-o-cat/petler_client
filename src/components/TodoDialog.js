@@ -11,6 +11,7 @@ import Grid from "@material-ui/core/Grid";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import moment from "moment";
+import Avatar from "@material-ui/core/Avatar";
 import MomentUtils from "@date-io/moment";
 import "moment/locale/ko";
 import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
@@ -41,6 +42,11 @@ const INITIAL_STATE = {
 const useStyles = makeStyles(() => ({
   root: {
     padding: "0 24px 24px",
+  },
+  avatar: {
+    marginRight: 6,
+    width: 32,
+    height: 32,
   },
 }));
 
@@ -262,7 +268,14 @@ const TodoDialog = () => {
             >
               {pets.map(pet => (
                 <MenuItem key={pet.id} value={pet.id}>
-                  {pet.name}
+                  <Grid container direction="row" justify="space-between" alignItems="center">
+                    <Grid item xs={6}>
+                      <Avatar alt={pet.name} src={pet.img} className={classes.avatar} />
+                    </Grid>
+                    <Grid item xs={6}>
+                      {pet.name}
+                    </Grid>
+                  </Grid>
                 </MenuItem>
               ))}
             </SelectValidator>
@@ -353,7 +366,7 @@ const TodoDialog = () => {
           </Grid>
           <Grid item xs={6}>
             <Button fullWidth type="submit" variant="contained" color="primary">
-              할일 {isEdit ? "수정" : "등록"}하기
+              할일 {isEdit ? "수정" : "등록"}
             </Button>
           </Grid>
         </Grid>
