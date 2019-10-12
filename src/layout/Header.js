@@ -15,6 +15,7 @@ const styles = ({ transitions }) => ({
       easing: transitions.easing.sharp,
       duration: transitions.duration.leavingScreen,
     }),
+    background: "#FFE599",
   },
   menuButton: {
     marginLeft: -8,

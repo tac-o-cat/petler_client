@@ -86,6 +86,7 @@ class Root extends React.Component {
       footerShrink: getScreenValue(footerShrink, width, initialConfig.footerShrink),
       screen: width,
     };
+
     return (
       <LayoutContext.Provider value={value}>
         <Component

@@ -46,7 +46,7 @@ const Main = () => {
         <Grid container direction="row" justify="space-between" spacing={2}>
           <Grid item>
             <Button
-              variant="outlined"
+              variant="contained"
               color="primary"
               onClick={dialogOpen}
               startIcon={<AddCircleOutlineIcon />}
