@@ -31,7 +31,7 @@ const Main = () => {
     setIsEdit(false);
   };
 
-  const useStyles = makeStyles(theme => ({
+  const useStyles = makeStyles(() => ({
     root: {
       height: "3.75rem",
       padding: "12px 12px 0",

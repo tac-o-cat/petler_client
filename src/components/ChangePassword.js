@@ -1,14 +1,17 @@
 /* eslint-disable no-alert */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core/styles";
 import { CHECK_CURRENT_PASSWORD, UPDATE_PASSWORD } from "queries/queries";
 import { useApolloClient, useMutation } from "@apollo/react-hooks";
+import { CurrentUserContext } from "components/Authentication";
 
 const ChangePassword = ({ history }) => {
   const client = useApolloClient();
+  const { handleToast } = useContext(CurrentUserContext);
+
   const [changePassword, setChangedPassword] = useState({
     prevPassword: "",
     isValidate: false,
@@ -48,7 +51,7 @@ const ChangePassword = ({ history }) => {
       if (data.confirmPW) {
         setChangedPassword({ ...changePassword, isValidate: data.confirmPW });
       } else {
-        alert("비밀번호를 확인하세요");
+        handleToast("비밀번호를 확인해주세요");
       }
     } catch (error) {
       alert(error.message);
@@ -57,7 +60,7 @@ const ChangePassword = ({ history }) => {
   const [updatePassword] = useMutation(UPDATE_PASSWORD, {
     onCompleted(data) {
       if (data.updatePassword) {
-        alert("비밀번호가 변경되었습니다");
+        handleToast("비밀번호가 변경되었습니다");
         history.push("/mypage");
       }
     },

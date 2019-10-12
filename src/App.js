@@ -5,12 +5,12 @@ import {
   NotFound,
   SignUp,
   FindPassword,
-  CreateChannel,
   Main,
   MyPage,
   ChannelSettings,
   MemberSettings,
   CreatePetProfile,
+  CreateChannel,
   PetSettings,
 } from "pages";
 import LayoutWrapper from "layout/LayoutWrapper";
@@ -30,7 +30,6 @@ function App() {
           <Route path="/mypage" component={MyPage} />
           <Route path="/channelsettings" component={ChannelSettings} />
           <Route path="/membersettings" component={MemberSettings} />
-          <Route path="/addChannel" component={CreateChannel} />
           <Route path="/createpetprofile" component={CreatePetProfile} />
           <Route path="/petsettings" component={PetSettings} />
         </LayoutWrapper>

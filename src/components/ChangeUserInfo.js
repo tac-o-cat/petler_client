@@ -1,5 +1,4 @@
-/* eslint-disable no-alert */
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
@@ -8,8 +7,10 @@ import UploadProfilePic from "components/UploadProfilePic";
 import { makeStyles } from "@material-ui/core/styles";
 import { GET_USER_BY_TOKEN, UPDATE_USER_INFO } from "queries/queries";
 import { useQuery, useMutation } from "@apollo/react-hooks";
+import { CurrentUserContext } from "components/Authentication";
 
 const ChangeUserInfo = ({ history }) => {
+  const { handleToast } = useContext(CurrentUserContext);
   const { data } = useQuery(GET_USER_BY_TOKEN, {
     variables: { token: localStorage.getItem("token") },
   });
@@ -41,7 +42,7 @@ const ChangeUserInfo = ({ history }) => {
     ],
     onCompleted({ updateUserInfo }) {
       if (updateUserInfo) {
-        alert("회원정보 수정이 완료되었습니다.");
+        handleToast("정보 수정이 완료되었습니다, 멍멍!");
       }
     },
   });

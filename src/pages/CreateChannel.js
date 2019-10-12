@@ -10,7 +10,7 @@ import { useMutation } from "@apollo/react-hooks";
 import { CurrentUserContext } from "components/Authentication";
 
 const CreateChannel = props => {
-  const { setCurrentChannel } = useContext(CurrentUserContext);
+  const { setCurrentChannel, handleToast } = useContext(CurrentUserContext);
 
   const [channel, setChannel] = useState({ channelName: "" });
   const { channelName } = channel;
@@ -23,7 +23,7 @@ const CreateChannel = props => {
     },
     title: {
       marginBottom: theme.spacing(2),
-      fontSize: "2rem",
+      fontSize: "1.5rem",
       textAlign: "left",
     },
   }));
@@ -37,7 +37,7 @@ const CreateChannel = props => {
   const [createChannel] = useMutation(CREATE_CHANNEL, {
     onCompleted(data) {
       setCurrentChannel({ id: data.createChannel.id, name: data.createChannel.name });
-      alert("채널이 생성되었습니다!");
+      handleToast("채널이 생성되었습니다, 멍멍!");
       props.history.push({
         pathname: "/createpetprofile",
         state: { isEdit: false, prevPath: props.location.pathname },
