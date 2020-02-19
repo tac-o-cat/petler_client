@@ -1,9 +1,13 @@
 # Petler
- <img src="https://user-images.githubusercontent.com/48303292/74818688-6ffcb200-5342-11ea-94b3-9b692bc34892.gif" alt="demo1" width="40%"/>
- <img src="https://user-images.githubusercontent.com/48303292/74819722-2ad97f80-5344-11ea-809b-771248ce51c1.gif" alt="demo2" width="20%"/>
- <img src="https://user-images.githubusercontent.com/48303292/74819978-94f22480-5344-11ea-80b7-3451d325bb8e.gif" alt="demo3" width="20%"/>
-
 반려동물 공동 케어에 특화된 투두 앱, Pet + butler = Petler입니다.
+
+# Demo
+ 1. 투두 리스트 실시간 업데이트
+ <img src="https://user-images.githubusercontent.com/48303292/74818688-6ffcb200-5342-11ea-94b3-9b692bc34892.gif" alt="demo1" width="40%"/>
+ 2. 채널별 펫 추가
+ <img src="https://user-images.githubusercontent.com/48303292/74819722-2ad97f80-5344-11ea-809b-771248ce51c1.gif" alt="demo2" width="20%"/> 
+ 3. 채널별 투두 필터링
+ <img src="https://user-images.githubusercontent.com/48303292/74819978-94f22480-5344-11ea-80b7-3451d325bb8e.gif" alt="demo3" width="20%"/>
 
 ## Feature
 ### 리얼타임 투두 리스트 
