@@ -1,22 +1,14 @@
-### Git rules
+# Petler
+반려동물 공동 케어에 특화된 투두 앱, Pet + butler = Petler입니다.
 
-1. 명령형으로 작성. e.g. ✨ Add navigator component
-2. 커밋 메시지 앞에 emoji 붙이기(https://gitmoji.carloscuesta.me/)
-3. 작업 단위 별로 커밋하기.
+## Feature
+<img src="https://user-images.githubusercontent.com/48303292/74818688-6ffcb200-5342-11ea-94b3-9b692bc34892.gif" alt="demo1" width="40%"/>
+<img src="https://user-images.githubusercontent.com/48303292/74819722-2ad97f80-5344-11ea-809b-771248ce51c1.gif" alt="demo2" width="20%"/>
+<img src="https://user-images.githubusercontent.com/48303292/74819978-94f22480-5344-11ea-80b7-3451d325bb8e.gif" alt="demo3" width="20%"/>
+- 여러 집사들이 실시간으로 하나의 투두 리스트를 편집할 수 있습니다. 수정된 투두는 바로 업데이트되며, 같은 채널에 속한 사람들은 변경 사항을 바로 함께 볼 수 있습니다. 
+- 채널별 펫 추가, 집사 추가를 할 수 있습니다. 
+- 한 유저가 여러 채널에 속할 수 있습니다. 집냥이도 돌보고, 길냥이도 돌보세요!
+- 일정 재생성 기능이 있습니다. 병원 가기, 약 먹이기와 같은 반복적인 작업들을 편하게 설정해 보세요.
 
-- gitmoji
-
-  (추가적으로 필요한 이모지는 gitmoji 사이트 참고)
-
-  - ✨(sparkles): 새로운 컴포넌트, 기능 추가
-  - 📝(pencil): markdown 파일 등 수정
-  - 🙈(see_no_evil): .gitignore 추가/수정
-  - 💄(lipstick): UI 수정/추가
-  - 🚧(construction): 작업 진행 중
-  - 🎨(art): js 수정
-  - 🔥(fire): 코드 삭제
-  - 🐛(bug): 버그 수정
-  - ➕(heavy_plus_sign): 디펜던시 추가
-  - ➖(heavy_minus_sign): 디펜던시 삭제
-  - 💩(poop): 앞으로 수정해야 할 나쁜 코드!
-  - 👌(ok_hand): 코드 리뷰 후 코드 수정
+## About
+- GraphQL, Apollo, React를 주요 스택으로 하여 완성된 웹앱입니다. 
